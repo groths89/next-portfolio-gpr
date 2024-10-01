@@ -45,19 +45,19 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head />
       <body
-        className={cn("min-h-screen font-sans antialiased bg-gray-700", fontSans.variable)}
+        className={cn("min-h-screen font-sans antialiased bg-primary-background", fontSans.variable)}
       >
-        <div className={cn("p-4 bg-gray-700 w-full h-full relative overflow-hidden")}>
-          <div className={cn("max-w-full mx-auto bg-gray-800 bg-cover w-full h-full relative overflow-hidden shadow-sm")}>
+        <div className={cn("p-4 bg-primary-background w-full h-full relative overflow-hidden")}>
+          <div className={cn("max-w-full mx-auto bg-primary-background bg-cover w-fit h-full relative overflow-hidden shadow-sm")}>
             <div className={cn("relative flex flex-nowrap")}>
               <InfoBar>
-                <div className={cn("fixed p-0 px-4")}>
+                <div className={cn("w-72 fixed p-4")}>
                   <div className={cn("w-full h-20 justify-start items-center absolute left-0 top-0 z-50 hidden")}> 
                     <a className={cn("ml-auto pointer-events-auto text-base px-8 py-12")}> 
                       <i className="fas fa-ellipsis-v"></i> 
                     </a> 
                   </div>
-                  <div className={cn("relative left-0 top-0 z-50 w-full p-6 h-60 bg-gradient-to-br from-gray-700 to-gray-800 text-center shadow-sm")}> 
+                  <div className={cn("relative left-0 top-0 z-50 w-full p-6 h-auto bg-gradient-to-br from-gray-700 to-gray-800 text-center shadow-sm")}> 
                     <div className={cn("w-24 h-24 mx-auto rounded-full relative mb-4")}> 
                       <a data-no-swup="" href="https://arter.bslthemes.com/wp-content/uploads/2020/09/face-1.jpg" className={cn("relative w-full h-full rounded-full flex justify-center outline-none transition-all duration-200 ease-in-out z-0")}> 
                         <img className={cn("absolute w-full h-full object-cover rounded-full z-0")} src="https://arter.bslthemes.com/wp-content/uploads/2020/09/face-1.jpg" alt="avatar" />
@@ -80,7 +80,23 @@ export default function RootLayout({
                   {children}
                   <Footer />
                 </Main>
-                <Nav />
+                <div className={cn("absolute right-0 w-20 h-full")}>
+                  <div className={cn("fixed right-0 w-20")}>
+                    <div className={cn("relative")}>
+                      <div className={cn("w-full h-20 flex justify-start items-center absolute top-0 left-0 z-9 shadow-sm bg-gradient-to-br from-gray-700 to-gray-800")}>
+                        <a href="">
+                          <span></span>
+                        </a>
+                      </div>
+                      <div className={cn("w-48 rotate-90 text-white absolute overflow-hidden top-40 left-full opacity-100 text-uppercase text-sm leading-tight font-medium transition-all duration-400 ease-in-out")}>
+                        <a href=""></a>
+                      </div>
+                      <div className={cn("w-full h-full")}>
+                        <Nav />
+                      </div>                  
+                    </div>                  
+                  </div>                  
+                </div>
               </ThemeProvider>
               <Analytics />              
             </div>
@@ -95,7 +111,7 @@ const Nav = ({ className, children, id }: NavProps) => {
   return (
     <nav
       className={cn(
-        "sticky z-50 top-0 bg-background",
+        "flex items-center h-full relative",
         "border-b",
         "fade-in",
         className,
