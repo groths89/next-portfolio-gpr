@@ -1,0 +1,173 @@
+---
+---
+
+<nav id="global-nav" class="global-nav">
+  <div class="nav-brand">EDITION_1989</div>
+  <div class="nav-primary">
+    <a href="/#origin">Origin</a>
+    <a href="/#projects">Archive</a>
+    <a href="/#philosophy">The Why</a>
+    <a href="/#contact">Connect</a>  
+  </div>
+  <div class="nav-links">
+    <a href="/timeline">The Timeline</a>
+    <a href="/blog">The Archive</a>
+  </div>
+</nav>
+
+<script>
+  const nav = document.getElementById('global-nav');
+  
+  function updateNav() {
+    if (window.scrollY > 50) {
+      nav?.classList.add('minimized');
+    } else {
+      nav?.classList.remove('minimized');
+    }
+  }
+
+  window.addEventListener('scroll', updateNav);
+</script>
+
+<style>
+  .global-nav {
+    /* Positioning */
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+
+    /* Layout */
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 0.75rem 2rem;
+
+    /* "Modern Editorial" Look" */
+    background: rgba(248, 247, 242, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--ink);
+    border-radius: 100px;
+
+    /* Shadow for depth */
+    box-shadow: 0 10px 30px rgba(0, 10px, 30px, rgba(0,0,0,0.1));
+
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .global-nav.minimized {
+    padding: 0.5rem 1.5rem;
+    gap: 1rem;
+    bottom: 1.5rem;
+    background: rgba(248, 247, 242, 0.6);
+  }
+
+  .nav-primary a {
+    color: var(--ink);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .nav-primary {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .nav-brand {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--ink);
+    border-right: 1px solid var(--ink);
+    padding-right: 1.5rem;
+    text-transform: uppercase;
+
+    transition: all 0.4s ease;
+    max-width: 200px;
+    opacity: 1;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .global-nav.minimized .nav-brand {
+    max-width: 0;
+    padding-right: 0;
+    opacity: 0;
+    border-right-color: transparent;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .nav-links a {
+    color: var(--ink);
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  /* The hover headline Underline */
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--accent);
+    transition: width 0.3s ease;
+  }
+
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
+  .nav-links a:hover {
+    color: var(--accent);
+  }
+
+  /* Active State (to show what page on) */
+  .nav-links a.active {
+    color: var(--accent);
+  }
+
+  /* Mobile Responsive Nav */
+  @media (max-width: 768px) {
+    .global-nav {
+      width: 90%;
+      bottom: 1rem;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      justify-content: flex-start;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      /* Hide scrollbar for cleaner look */
+      scrollbar-width: none; 
+    }
+    
+    .global-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-brand {
+      display: none;
+    }
+    
+    .nav-primary, .nav-links {
+      gap: 1rem;
+    }
+  }
+</style>

@@ -1,0 +1,88 @@
+---
+interface Props {
+  src: string,
+  name: string
+}
+
+const { src, name } = Astro.props;
+---
+
+<div class="portrait-container">
+  <div class="pixel-frame">
+    <div class="scanline-overlay"></div>
+    <img src={src} alt={name} />
+  </div>
+  <div class="name-plate">
+  <span class="bracket">[</span>
+    <h3 class="name-text">{name}</h3>
+    <span class="bracket">]</span>
+  </div>
+</div>
+
+<style>
+.portrait-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .pixel-frame {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 6px solid #ff00ff; /* Neon pink from your image */
+    background: #000;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 8px 8px 0px var(--ink);
+  }
+
+  .pixel-art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* This is the magic property for pixel art */
+    image-rendering: pixelated; 
+    image-rendering: crisp-edges;
+  }
+
+  /* Retro CRT Scanline effect */
+  .scanline-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.1) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .name-plate {
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--ink);
+    color: var(--off-white);
+    padding: 0.5rem 1rem;
+    font-family: var(--font-mono);
+  }
+
+  .name-text {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+  }
+
+  .bracket {
+    color: #ff00ff;
+    font-weight: bold;
+  }
+</style>
