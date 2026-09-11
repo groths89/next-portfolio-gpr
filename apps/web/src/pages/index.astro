@@ -1,0 +1,600 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HomeHero from '../components/HomeHero.astro';
+import Masthead from '../components/Masthead.astro';
+import { library, icon } from '@fortawesome/fontawesome-svg-core';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { faRss } from '@fortawesome/free-solid-svg-icons';
+import { getSingleWPPage, type WPPost } from '../lib/wp.ts';
+
+library.add(faEnvelope, faRss);
+
+const emailicon = icon({ prefix: "fas", iconName: "envelope" }).html.join('');
+const rssicon = icon({ prefix: "fas", iconName: "rss" }).html.join('');
+
+const wpFrontPage: WPPost | null = await getSingleWPPage('front-page');
+const wpTechPage: WPPost | null = await getSingleWPPage('tech-page');
+const wpSportsPage: WPPost | null = await getSingleWPPage('sports-page');
+---
+
+<BaseLayout title="Home">
+	<button id="scroll-indicator" class="scroll-indicator" aria-label="Scroll to content">
+		<span class="scroll-text">Click for more</span>
+		<span class="scroll-icon">↓</span>
+	</button>
+	<div id="hero-container">
+		<HomeHero />
+	</div>
+	<article id="front-page" class="newspaper-wrapper">
+		<Masthead />
+		<section id="content" class="content-wrapper">
+			{/* DYNAMIC WORDPRESS PAGE OR STATIC BROADSHEET FALLBACK */}
+			{wpFrontPage ? (
+				<div class="wp-rendered-content newspaper-columns" set:html={wpFrontPage.content.rendered} />
+			) : (
+				<div class="newspaper-columns">
+				</div>
+			)}
+
+			<div id="section-3" class="section-3">
+				<div>
+					<div>
+						<span>Quick Clips:</span>
+					</div>
+					<div>Weather: Cloud Infrastructure Stable</div>
+					<div>Stocks: Semiconductor Futures Rising</div>
+					<div>Obituaries: Legacy IE Support Laid to Rest</div>
+					<div id="buttons" class="buttons">
+						<Fragment set:html={rssicon} />
+						<Fragment set:html={emailicon} />
+					</div>
+				</div>
+			</div>
+		</section>		
+	</article>
+	<article id="tech-page" class="newspaper-wrapper">
+    <Masthead />
+    <section id="content" class="content-wrapper">
+			{/* DYNAMIC WORDPRESS PAGE OR STATIC BROADSHEET FALLBACK */}
+			{wpTechPage ? (
+				<div class="wp-rendered-content newspaper-columns" set:html={wpTechPage.content.rendered} />
+			) : (
+				<div class="newspaper-columns">
+				</div>
+			)}
+    </section>
+  </article>
+	<article id="sports-page" class="newspaper-wrapper">
+    <Masthead />
+    <section id="content" class="content-wrapper">
+			{/* DYNAMIC WORDPRESS PAGE OR STATIC BROADSHEET FALLBACK */}
+			{wpSportsPage ? (
+				<div class="wp-rendered-content newspaper-columns" set:html={wpSportsPage.content.rendered} />
+			) : (
+				<div class="sports-layout">
+				</div>
+			)}
+		</section>
+	</article>
+	<article id="op-ed-page" class="newspaper-wrapper">
+		<Masthead />
+		<section id="content" class="content-wrapper">
+			<div class="section-1">
+				<div class="sidebar">Opinion / Editorial</div>
+			</div>
+		</section>
+	</article>
+	<article id="classifieds-page" class="newspaper-wrapper">
+		<Masthead />
+		<section id="content" class="content-wrapper">
+			<div class="section-1">
+				<div class="sidebar">Classifieds</div>
+			</div>
+		</section>
+	</article>
+</BaseLayout>
+<style>
+	.newspaper-wrapper {
+		width: 100%;
+		min-height: 100vh;
+	}
+
+	.content-wrapper {
+		width: 100%;
+		max-width: 1200px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		padding: 1rem 1.5rem;
+	}
+
+	.edition-banner {
+		display: flex;
+		justify-content: space-between;
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		font-weight: 700;
+		border-top: 2px solid var(--ink);
+		border-bottom: 2px solid var(--ink);
+		padding: 0.4rem 0;
+		margin-bottom: 1.5rem;
+		text-transform: uppercase;
+	}
+
+	/* SPORTS LAYOUT GRID */
+	.sports-layout {
+		display: grid;
+		grid-template-columns: 2.2fr 1.2fr;
+		gap: 2rem;
+		border-bottom: 4px solid var(--ink);
+		padding-bottom: 2rem;
+	}
+
+	@media (max-width: 900px) {
+		.sports-layout {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.sports-main-stories {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.sports-data-sidebar {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		border-left: 2px solid var(--ink);
+		padding-left: 1.5rem;
+	}
+
+	@media (max-width: 900px) {
+		.sports-data-sidebar {
+			border-left: none;
+			padding-left: 0;
+			border-top: 2px solid var(--ink);
+			padding-top: 1.5rem;
+		}
+	}
+
+	/* STANDINGS TABLES */
+	.data-box {
+		border: 1px solid var(--ink);
+		padding: 0.8rem;
+		background: var(--off-white);
+	}
+
+	.table-title, :global(.wp-rendered-content h3) {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 900;
+		text-transform: uppercase;
+		border-bottom: 2px solid var(--ink);
+		padding-bottom: 0.3rem;
+		margin-bottom: 0.5rem;
+		letter-spacing: 0.5px;
+	}
+
+	.standings-table, :global(.wp-rendered-content table) {
+		width: 100%;
+		border-collapse: collapse;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		text-align: right;
+	}
+
+	.standings-table th, :global(.wp-rendered-content th) {
+		border-bottom: 1px solid var(--ink);
+		padding: 0.2rem 0.4rem;
+		font-weight: 700;
+	}
+
+	.standings-table td, :global(.wp-rendered-content td) {
+		padding: 0.25rem 0.4rem;
+		border-bottom: 1px dotted var(--ink);
+	}
+
+	.standings-table th:first-child,
+	.standings-table td:first-child,
+	:global(.wp-rendered-content th:first-child),
+	:global(.wp-rendered-content td:first-child) {
+		text-align: left;
+	}
+
+	.highlight-row {
+		font-weight: 900;
+		background: rgba(0,0,0,0.05);
+	}
+
+	/* UNIVERSAL MULTI-COLUMN BROADSHEET (Applied to both static & WP rendered markup) */
+	.newspaper-columns {
+		column-count: 3;
+		column-gap: 2rem;
+		column-rule: 1px solid var(--ink);
+		border-bottom: 4px solid var(--ink);
+		padding-bottom: 2rem;
+		width: 100%;
+	}
+
+	@media (max-width: 1024px) {
+		.newspaper-columns {
+			column-count: 2;
+		}
+	}
+
+	@media (max-width: 650px) {
+		.newspaper-columns {
+			column-count: 1;
+			column-rule: none;
+		}
+	}
+
+	/* STATIC ARTICLE BREAK PREVENTIONS */
+	.news-article {
+		break-inside: avoid;
+		page-break-inside: avoid;
+		display: block;
+		margin-bottom: 2rem;
+		padding-bottom: 1.5rem;
+		border-bottom: 1px solid var(--ink);
+	}
+
+	.lead-article {
+		column-span: all;
+		border-bottom: 2px solid var(--ink);
+		margin-bottom: 2rem;
+		padding-bottom: 1.5rem;
+	}
+
+	.tagline {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: var(--accent);
+		margin-bottom: 0.3rem;
+	}
+
+	.headline-h1 {
+		font-family: var(--font-serif);
+		text-transform: uppercase;
+		font-size: clamp(2rem, 3.5vw, 3.2rem);
+		font-weight: 900;
+		line-height: 1.05;
+		margin: 0.4rem 0;
+	}
+
+	.headline-h2 {
+		font-family: var(--font-serif);
+		text-transform: uppercase;
+		font-size: clamp(1.3rem, 2vw, 1.8rem);
+		font-weight: 900;
+		line-height: 1.1;
+		margin: 0.4rem 0;
+	}
+
+	.byline {
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		color: var(--ink);
+		margin-bottom: 0.8rem;
+		border-bottom: 1px solid var(--ink);
+		padding-bottom: 0.2rem;
+		display: inline-block;
+	}
+
+	.article-body {
+		font-family: serif;
+		font-size: 1rem;
+		line-height: 1.5;
+		text-align: justify;
+	}
+
+	.article-body p {
+		margin-bottom: 0.8rem;
+	}
+
+	.drop-cap::first-letter {
+		font-family: var(--font-serif);
+		font-size: 3.5rem;
+		float: left;
+		line-height: 0.75;
+		padding-bottom: 0.1rem;
+		margin-right: 6px;
+		color: var(--ink);
+		font-weight: 900;
+	}
+
+	.developer-commentary {
+		background: var(--off-white);
+		border: 2px solid var(--ink);
+		border-left: 5px solid var(--ink);
+		padding: 0.8rem;
+		margin: 1rem 0 0.5rem 0;
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		line-height: 1.4;
+	}
+
+	.developer-commentary p {
+		margin-bottom: 0.4rem;
+	}
+
+	.developer-commentary p:last-child {
+		margin-bottom: 0;
+	}
+
+	/* -------------------------------------------------------------
+	   STRICT NEWSPAPER COLUMN FORMATTING FOR DYNAMIC WORDPRESS HTML 
+	   ------------------------------------------------------------- */
+	.wp-rendered-content :global(h1) {
+		font-family: var(--font-serif);
+		text-transform: uppercase;
+		font-size: clamp(2rem, 3.5vw, 3.2rem);
+		font-weight: 900;
+		line-height: 1.05;
+		margin: 0.5rem 0 1rem 0;
+		column-span: all; /* Main title spans across all columns */
+		border-bottom: 2px solid var(--ink);
+		padding-bottom: 0.5rem;
+	}
+
+	.wp-rendered-content :global(h2) {
+		font-family: var(--font-serif);
+		text-transform: uppercase;
+		font-size: clamp(1.3rem, 2vw, 1.8rem);
+		font-weight: 900;
+		line-height: 1.1;
+		margin: 1.5rem 0 0.5rem 0;
+		break-after: avoid;
+		break-inside: avoid;
+	}
+
+	.wp-rendered-content :global(h3),
+	.wp-rendered-content :global(h4) {
+		font-family: var(--font-mono);
+		font-size: 0.85rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: var(--ink);
+		margin: 0.5rem 0 0.8rem 0;
+		border-bottom: 1px solid var(--ink);
+		padding-bottom: 0.2rem;
+		break-after: avoid;
+		break-inside: avoid;
+	}
+
+	.wp-rendered-content :global(p) {
+		font-family: serif;
+		font-size: 1rem;
+		line-height: 1.5;
+		margin-bottom: 0.8rem;
+		text-align: justify;
+		orphans: 2;
+		widows: 2;
+	}
+
+	.wp-rendered-content :global(blockquote) {
+		background: var(--off-white);
+		border: 2px solid var(--ink);
+		border-left: 5px solid var(--ink);
+		padding: 0.8rem;
+		margin: 1rem 0;
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		line-height: 1.4;
+		break-inside: avoid;
+	}
+
+	.wp-rendered-content :global(figure),
+	.wp-rendered-content :global(img) {
+		max-width: 100%;
+		height: auto;
+		display: block;
+		margin: 1rem 0;
+		border: 1px solid var(--ink);
+		break-inside: avoid;
+	}
+
+	.wp-rendered-content :global(.wp-block-columns),
+	.wp-rendered-content :global(.wp-block-group) {
+		break-inside: avoid;
+		margin-bottom: 1.5rem;
+	}
+
+	/* SECTION 3 BOTTOM BAR */
+	.section-3 {
+		width: 100%;
+		margin-top: 1.5rem;
+		font-family: var(--font-mono);
+		font-size: 8pt;
+		text-transform: uppercase;
+		border-top: 2px solid var(--ink);
+		padding-top: 1rem;
+	}
+
+	.section-3 > div {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
+	.buttons {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+	}
+
+	.buttons :global(svg) {
+		width: 1.2rem;
+		height: 1.2rem;
+	}
+
+	/* SCROLL INDICATOR BUTTON */
+	.scroll-indicator {
+		position: fixed;
+		bottom: 6rem; 
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 100;
+		background: var(--off-white);
+		border: 2px solid var(--ink);
+		padding: 1.5rem 1rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+		cursor: pointer;
+		border-radius: 50px;
+		box-shadow: 0px 8px 0px var(--ink);
+		transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+		animation: bounce 2s infinite;
+	}
+
+	@keyframes bounce {
+		0%, 20%, 50%, 80%, 100% {
+			transform: translateX(-50%) translateY(0);
+		}
+		40% {
+			transform: translateX(-50%) translateY(-10px);
+		}
+		60% {
+			transform: translateX(-50%) translateY(-5px);
+		}
+	}
+
+	.scroll-indicator:hover {
+		animation-play-state: paused;
+		background: var(--ink);
+		color: var(--off-white);
+		transform: translateX(-50%) translateY(-2px);
+		box-shadow: 0px 4px 0px var(--ink);
+	}
+
+	.scroll-text {
+		font-family: var(--font-mono);
+		font-size: 0.6rem;
+		text-transform: uppercase;
+		font-weight: 700;
+		writing-mode: vertical-rl;
+		letter-spacing: 2px;
+		color: var(--ink);
+	}
+
+	.scroll-indicator:hover .scroll-text,
+	.scroll-indicator:hover .scroll-icon {
+		color: var(--off-white);
+	}
+
+	.scroll-icon {
+		font-size: 1.2rem;
+	}
+</style>
+<script>
+	const scrollBtn = document.getElementById('scroll-indicator');
+	const sections = document.querySelectorAll('.newspaper-wrapper') as NodeListOf<HTMLElement>;
+	const heroContainer = document.getElementById('hero-container'); // The initial hero section
+	const globalNav = document.getElementById('global-nav'); // The floating pill navigation
+
+	// Function to show a specific newspaper section and hide others
+	function showSection(targetId: string, smoothScroll = true) {
+		// Hide all newspaper-wrapper sections
+		sections.forEach(sec => {
+			sec.style.display = 'none';
+		});
+
+		const targetSection = document.getElementById(targetId);
+		if (targetSection) {
+			targetSection.style.display = 'block'; // Show the target section
+			if (heroContainer) {
+				heroContainer.style.display = 'none'; // Hide the hero container
+			}
+			document.body.style.overflow = 'auto'; // Allow scrolling on the body
+			targetSection.scrollIntoView({ behavior: smoothScroll ? 'smooth' : 'auto' }); // Scroll to it
+
+			// Hide the scroll button once we've navigated to a section
+			if (scrollBtn) {
+				scrollBtn.style.opacity = '0';
+				scrollBtn.style.pointerEvents = 'none';
+			}
+		} else {
+			// If the target section doesn't exist, log a warning
+			console.warn(`Section with ID '${targetId}' not found on this page.`);
+		}
+	}
+
+	// Initial page load logic
+	if (heroContainer && sections.length > 0) {
+		const currentHash = window.location.hash.substring(1); // Get hash without '#'
+
+		// Hide all sections initially
+		sections.forEach(sec => sec.style.display = 'none');
+
+		if (currentHash && document.getElementById(currentHash)) {
+			// If there's a valid hash in the URL, show that section immediately
+			showSection(currentHash, false); // No smooth scroll on initial load with hash
+		} else if (window.scrollY > 50) {
+			// If the user has already scrolled past the hero on a non-hash load, show front-page
+			showSection('front-page', false); // No smooth scroll on initial load if already scrolled
+		} else {
+			// Otherwise, show hero and lock scroll
+			if (heroContainer) {
+				heroContainer.style.display = 'block';
+			}
+			document.body.style.overflow = 'hidden';
+			// Ensure front-page is ready to be shown if scroll-indicator is clicked
+			const frontPage = document.getElementById('front-page');
+			if (frontPage) {
+				frontPage.style.display = 'block';
+			}
+		}
+	}
+
+	// Scroll button click handler (from hero to front-page)
+	if (scrollBtn) {
+		scrollBtn.addEventListener('click', () => {
+			showSection('front-page'); // Always scroll to front-page
+			// Update URL hash without causing a full page reload
+			history.pushState(null, '', '#front-page');
+		});
+	}
+
+	// Global navigation click handler for anchor links
+	if (globalNav) {
+		globalNav.addEventListener('click', (event) => {
+			const target = event.target as HTMLAnchorElement;
+			// Check if the clicked element is an anchor tag and its href starts with '#'
+			if (target.tagName === 'A' && (target.getAttribute('href') || '').startsWith('#')) {
+				event.preventDefault(); // Prevent default anchor jump
+				const targetId = target.getAttribute('href')?.substring(1) || '';
+				if (targetId) {
+					showSection(targetId);
+					// Update URL hash without causing a full page reload
+					history.pushState(null, '', `#${targetId}`);
+				}
+			};
+		});
+	}
+
+	// Manual Scroll Fallback (for when user scrolls past hero without clicking scrollBtn)
+	if (heroContainer && scrollBtn) {
+		window.addEventListener('scroll', () => {
+			const scrollThreshold = 100;
+			if (window.scrollY > scrollThreshold) {
+				scrollBtn.style.opacity = '0';
+				scrollBtn.style.pointerEvents = 'none';
+			} else if (document.body.style.overflow === 'hidden') {
+				scrollBtn.style.opacity = '1';
+				scrollBtn.style.pointerEvents = 'auto';
+			}
+		});
+	}
+
+</script>

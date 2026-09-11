@@ -1,0 +1,354 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Masthead from '../components/Masthead.astro';
+import { getWPPosts, getWPPages } from '../lib/wp';
+
+export async function getStaticPaths(){
+  const posts = await getWPPosts();
+  const pages = await getWPPages();
+  const allContent = [...posts, ...pages];
+
+  return allContent.map((item) => ({
+    params: { slug: item.slug },
+    props: { content: item }
+  }));
+};
+
+const { content } = Astro.props;
+
+// Layout Selection Logic:
+// Rotates automatically via a post ID:
+// - ID % 3 === 0: Lead Broadside (2-Col Body + Left Sidebar)
+// - ID % 3 === 1: Editorial Op-Ed (Single Col, Heavy Border)
+// - ID % 3 === 2: Classified Wire (3-Col Flow + Right Sidebar)
+const layouts = ['lead-broadside', 'editorial-single', 'classified-wire'];
+const layoutVariant = layouts[content.id % 3];
+---
+<BaseLayout title={content.title.rendered}>
+  <article class={`newspaper-wrapper layout-${layoutVariant}`}>
+    <Masthead content={content} />
+    
+    <section class="content-wrapper">
+
+      {/* VARIANT 1: LEAD BROADSIDE (Header -> 2 Columns + Left Sidebar) */}
+      {layoutVariant === 'lead-broadside' && (
+        <div class="variant-broadside">
+          <header class="dispatch-header">
+            <p class="tagline">// EXTRA EDITION • DISPATCH #{content.id}</p>
+            <h1 class="headline" set:html={content.title.rendered} />
+            <div class="dispatch-meta">
+              <span class="mono-label">PUBLISHED: {new Date(content.date).toLocaleDateString()}</span>
+              <span class="mono-label">LAYOUT: BROADSIDE LEAD</span>
+            </div>
+          </header>
+
+          <div class="article-grid-broadside">
+            <aside class="sidebar">
+              <div class="figure-container">
+                <div class="placeholder-img"></div>
+                <p class="figure-caption">FIG 1.0: WIRE ARCHIVE #{content.id}</p>
+              </div>
+              <div class="tech-stack-container">
+                <h3 class="technology-heading">SPECIFICATIONS</h3>
+                <ul class="meta-list">
+                  <li>SLUG <span>/{content.slug}</span></li>
+                  <li>COLUMNS <span>2-COL FLOW</span></li>
+                  <li>STATUS <span>FILED</span></li>
+                </ul>
+              </div>
+            </aside>
+
+            <main class="main-article">
+              <div class="wp-newspaper-content two-col" set:html={content.content.rendered} />
+            </main>
+          </div>
+        </div>
+      )}
+
+      {/* VARIANT 2: EDITORIAL OP-ED (Single Centered Column, Heavy Typography) */}
+      {layoutVariant === 'editorial-single' && (
+        <div class="variant-editorial">
+          <div class="editorial-box">
+            <header class="editorial-header">
+              <span class="tagline">// OPINION & EDITORIAL</span>
+              <h1 class="headline editorial-headline" set:html={content.title.rendered} />
+              <div class="author-byline">
+                <span class="mono-label">BY THE EDITORIAL BOARD</span>
+                <span class="mono-label">•</span>
+                <span class="mono-label">{new Date(content.date).toLocaleDateString()}</span>
+              </div>
+            </header>
+
+            <main class="editorial-body">
+              <div class="wp-newspaper-content single-col" set:html={content.content.rendered} />
+            </main>
+          </div>
+        </div>
+      )}
+
+      {/* VARIANT 3: CLASSIFIED WIRE (Reverse Sidebar -> Left Main, Right Meta, 3-Col Flow) */}
+      {layoutVariant === 'classified-wire' && (
+        <div class="variant-wire">
+          <header class="wire-header">
+            <div class="wire-badge">TELETYPE TRANSMISSION</div>
+            <h1 class="headline wire-headline" set:html={content.title.rendered} />
+          </header>
+
+          <div class="article-grid-wire">
+            <main class="main-article">
+              <div class="wp-newspaper-content three-col" set:html={content.content.rendered} />
+            </main>
+
+            <aside class="sidebar right-sidebar">
+              <div class="tech-stack-container">
+                <h3 class="technology-heading">WIRE METADATA</h3>
+                <ul class="meta-list">
+                  <li>ID <span>#{content.id}</span></li>
+                  <li>DATE <span>{new Date(content.date).toLocaleDateString()}</span></li>
+                  <li>ENCODING <span>UTF-8</span></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </div>
+      )}
+
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .newspaper-wrapper {
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  .content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem 1.5rem;
+  }
+
+  /* Common Typography & Headings */
+  .tagline {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .headline {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    font-weight: 900;
+    line-height: 1.05;
+  }
+
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .technology-heading {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 900;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .meta-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .meta-list li {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    border-bottom: 1px solid var(--ink);
+    padding: 0.3rem 0;
+  }
+
+  /* Base Body Text & Drop Cap */
+  .wp-newspaper-content {
+    font-family: serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    text-align: justify;
+  }
+
+  .wp-newspaper-content :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .wp-newspaper-content :global(p:first-of-type)::first-letter {
+    font-family: var(--font-serif);
+    font-size: 4rem;
+    float: left;
+    line-height: 0.75;
+    padding-bottom: 0.2rem;
+    margin-right: 8px;
+    color: var(--ink);
+    font-weight: 900;
+  }
+
+  /* ================= VARIANT 1: BROADSIDE ================= */
+  .dispatch-header {
+    border-bottom: 4px solid var(--ink);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+
+  .dispatch-header .headline {
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    margin: 0.5rem 0 1rem 0;
+  }
+
+  .dispatch-meta {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    border-top: 1px solid var(--ink);
+    padding-top: 0.75rem;
+  }
+
+  .article-grid-broadside {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    border-right: 2px solid var(--ink);
+    padding-right: 2.5rem;
+  }
+
+  .placeholder-img {
+    width: 100%;
+    height: 160px;
+    background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #eee 10px, #eee 20px);
+    border: 2px solid var(--ink);
+  }
+
+  .figure-caption {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+
+  .wp-newspaper-content.two-col {
+    column-count: 2;
+    column-gap: 2rem;
+    column-rule: 1px solid var(--ink);
+  }
+
+  /* ================= VARIANT 2: EDITORIAL (SINGLE COL) ================= */
+  .editorial-box {
+    max-width: 780px;
+    margin: 0 auto;
+    border: 3px solid var(--ink);
+    padding: 3rem;
+    background: var(--off-white);
+  }
+
+  .editorial-header {
+    text-align: center;
+    border-bottom: 2px double var(--ink);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .editorial-headline {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    margin: 0.75rem 0;
+    font-style: italic;
+  }
+
+  .author-byline {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .wp-newspaper-content.single-col {
+    column-count: 1;
+    font-size: 1.2rem;
+    line-height: 1.7;
+  }
+
+  /* ================= VARIANT 3: WIRE TRANSMISSION ================= */
+  .wire-header {
+    border-bottom: 2px dashed var(--ink);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .wire-badge {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--off-white);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .wire-headline {
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+  }
+
+  .article-grid-wire {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .sidebar.right-sidebar {
+    border-right: none;
+    border-left: 2px solid var(--ink);
+    padding-right: 0;
+    padding-left: 2rem;
+  }
+
+  .wp-newspaper-content.three-col {
+    column-count: 3;
+    column-gap: 1.5rem;
+    column-rule: 1px solid var(--ink);
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 900px) {
+    .article-grid-broadside,
+    .article-grid-wire {
+      grid-template-columns: 1fr;
+    }
+
+    .sidebar, .sidebar.right-sidebar {
+      border: none;
+      border-bottom: 2px solid var(--ink);
+      padding: 0 0 2rem 0;
+    }
+
+    .wp-newspaper-content.two-col,
+    .wp-newspaper-content.three-col {
+      column-count: 1;
+    }
+
+    .editorial-box {
+      padding: 1.5rem;
+    }
+  }
+</style>

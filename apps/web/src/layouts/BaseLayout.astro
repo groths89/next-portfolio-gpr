@@ -1,0 +1,71 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { icon } from "@fortawesome/fontawesome-svg-core";
+import { faInfo } from '@fortawesome/free-solid-svg-icons';
+
+import '../styles/global.css';
+import GameIntro from '../components/GameIntro.astro';
+import MissionStatusModal from '../components/MissionStatusModal.astro';
+import FloatingPillNavigation from '../components/FloatingPillNavigation.astro';
+import PageFlipSound from '../components/PageFlipSound.astro';
+
+const { title } = Astro.props;
+const infoIcon = icon(faInfo);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{ title } | 1989 Edition</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <div id="mission-control-tab">
+      <button id="trigger-help-modal" title="View Mission Briefing">
+        <span class="mission-label"><Fragment set:html={infoIcon.html} /></span>
+      </button>
+      <button id="trigger-mission-modal" title="View Mission Briefing">
+        <span class="mission-label">MISSION STATUS: <span id="key-count">0</span>/3</span>
+      </button>
+    </div>
+    <FloatingPillNavigation />
+    <main transition:name="newspaper-body" transition:animate="fade">
+      <slot />
+    </main>
+    <svg style="display: none;">
+      <filter id="grain">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0" />
+      </filter>
+    </svg>
+    <GameIntro />
+    <MissionStatusModal />
+  </body>
+  <PageFlipSound />
+</html>
+<style is:global>
+  .svg-inline--fa { height: 1em; vertical-align: -0.125em; }
+</style>
+<script>
+  // Escape Room Progress State
+  function updateMissionProgress(keyIndex: number) {
+    let keysFound = JSON.parse(localStorage.getItem('discovered_keys') || '[]');
+    if (!keysFound.includes(keyIndex)){
+      keysFound.push(keyIndex);
+      localStorage.setItem('discovered_keys', JSON.stringify(keysFound));
+    }
+
+    const countEl = document.getElementById('key-count');
+    if (countEl) countEl.textContent = keysFound.length.toString();
+  }
+
+  // Initialize Key Counter on Load
+  document.addEventListener('DOMContentLoaded', () => {
+    const keysFound = JSON.parse(localStorage.getItem('discovered_keys') || '[]');
+    const countEl = document.getElementById('key-count');
+    if (countEl) countEl.textContent = keysFound.length.toString();
+  });
+</script>

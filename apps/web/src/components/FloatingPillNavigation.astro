@@ -1,32 +1,74 @@
 ---
+import { getWPMenu } from '../lib/wp';
+
+const navItems = await getWPMenu();
+const pathname = Astro.url.pathname;
+const isHome = pathname === '/' || pathname === '';
+
+// Section anchor links used specifically on the home page
+const homeSections = [
+  { href: '#front-page', label: 'Front' },
+  { href: '#tech-page', label: 'Tech' },
+  { href: '#sports-page', label: 'Sports' },
+  { href: '#op-ed-page', label: 'Opinion' },
+  { href: '#classifieds-page', label: 'Classifieds' },
+];
+
+// Fallback/Secondary links shown on non-home pages
+const innerPageLinks = [
+  { href: '/', label: '← Front Page' },
+  { href: '/#top', label: 'Top' },
+];
 ---
 
 <nav id="global-nav" class="global-nav">
   <div class="nav-brand">EDITION_1989</div>
   <div class="nav-primary">
-    <a href="/#origin">Origin</a>
-    <a href="/#projects">Archive</a>
-    <a href="/#philosophy">The Why</a>
-    <a href="/#contact">Connect</a>  
+    {isHome
+      ? homeSections.map((section) => (
+          <a href={section.href}>{section.label.toUpperCase()}</a>
+        ))
+      : innerPageLinks.map((link) => (
+          <a href={link.href}>{link.label.toUpperCase()}</a>
+        ))
+    }
   </div>
   <div class="nav-links">
-    <a href="/timeline">The Timeline</a>
-    <a href="/blog">The Archive</a>
+    <!-- Dynamically injected WordPress pages -->
+    {navItems.map((item) => (
+      <a href={item.url}>{item.title.toUpperCase()}</a>
+    ))}    
   </div>
+
 </nav>
 
 <script>
-  const nav = document.getElementById('global-nav');
-  
-  function updateNav() {
-    if (window.scrollY > 50) {
-      nav?.classList.add('minimized');
-    } else {
-      nav?.classList.remove('minimized');
+  function initNavScroll() {
+    const nav = document.getElementById('global-nav');
+    if (!nav) return;
+
+    function updateNav() {
+      // Minimizes if scrolled past 50px OR if the page is too short to scroll much
+      if (window.scrollY > 50) {
+        nav?.classList.add('minimized');
+      } else {
+        nav?.classList.remove('minimized');
+      }
     }
+
+    // Run once on load to set initial state
+    updateNav();
+
+    // Attach scroll event
+    window.removeEventListener('scroll', updateNav);
+    window.addEventListener('scroll', updateNav);
   }
 
-  window.addEventListener('scroll', updateNav);
+  // Execute on initial DOM load
+  document.addEventListener('DOMContentLoaded', initNavScroll);
+
+  // Execute on Astro View Transitions navigation (if enabled)
+  document.addEventListener('astro:page-load', initNavScroll);
 </script>
 
 <style>
@@ -57,10 +99,11 @@
   }
 
   .global-nav.minimized {
-    padding: 0.5rem 1.5rem;
+    padding: 0.4rem 1.2rem;
     gap: 1rem;
-    bottom: 1.5rem;
-    background: rgba(248, 247, 242, 0.6);
+    bottom: 1rem;
+    background: rgba(248, 247, 242, 0.85);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .nav-primary a {

@@ -1,0 +1,321 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Masthead from '../components/Masthead.astro';
+import { getWPPosts, type WPPost } from '../lib/wp.ts';
+import { getGroupedTags } from '../utils/wordpress.ts';
+
+// 1. Fetch all WordPress posts
+const allPosts: WPPost[] = await getWPPosts();
+
+// 2. Filter posts by category or tag group matching "projects" or "project"
+const projectPosts = allPosts.filter((post) => { 
+	// Check taxonomy terms embedded in WordPress response
+	const terms = (post as any)?._embedded?.['wp:term'] || [];
+	const categories = terms.flat().filter((term: any) => term.taxonomy === 'category');
+	const hasProjectCategory = categories.some(
+		(cat: any) => cat.slug.toLowerCase() === 'projects' || cat.name.toLowerCase() === 'projects'
+	);
+
+	// Fallback / alternate check against custom tag groups (e.g. project:xyz or general tag 'project')
+	const groupedTags = getGroupedTags(post);
+	const hasProjectTag =
+		Boolean(groupedTags['project'] && groupedTags['project'].length > 0) ||
+		Boolean(groupedTags['general']?.includes('project') || groupedTags['general']?.includes('projects'));
+
+	return hasProjectCategory || hasProjectTag;
+});
+
+// Seperate lead project from secondary project dispatches
+const featuredProject = projectPosts[0];
+const secondaryProjects = projectPosts.slice(1);
+---
+<BaseLayout title="Project Archive | Edition 1989">
+	<article class="newspaper-wrapper">
+    <Masthead />
+
+    <section class="content-wrapper">
+      {/* Archive Section Banner Header */}
+      <div class="archive-header-banner">
+        <p class="tagline">// CLASSIFIED PROJECT DOSSIERS & REPORTS</p>
+        <h1 class="archive-title">THE BUILDER'S GAZETTE</h1>
+        <p class="archive-subtitle">
+          SPECIAL REPORT: ARCHIVED WORKS, SYSTEM ARCHITECTURES, AND EXPERIMENTAL LOGIC
+        </p>
+      </div>
+
+      {projectPosts.length === 0 ? (
+        <div class="empty-state">
+          <p class="mono-label">NO DISPATCHES RETRIEVED UNDER THE 'PROJECTS' CATEGORY.</p>
+        </div>
+      ) : (
+        <>
+          {/* Featured / Lead Project Dossier */}
+          {featuredProject && (
+            <div class="featured-section">
+              <div class="headline-container">
+                <p class="tagline">// FEATURED DOSSIER</p>
+                <h2 class="featured-headline">
+                  <a href={`/${featuredProject.slug}`} set:html={featuredProject.title.rendered} />
+                </h2>
+                <p class="mono-label">
+                  RECORDED: {new Date(featuredProject.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
+                </p>
+              </div>
+
+              <div class="lead-story-container">
+                <div class="lead-story-col">
+                  <div class="lead-story drop-cap" set:html={featuredProject.excerpt.rendered} />
+                  <a href={`/${featuredProject.slug}`} class="project-link">
+                    Read Full Dossier &rarr;
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Secondary Projects Grid */}
+          {secondaryProjects.length > 0 && (
+            <div class="archive-grid">
+              {secondaryProjects.map((post) => (
+                <article class="archive-card">
+                  <div class="card-meta">
+                    <span class="tagline">PROJECT REPORT #{post.id}</span>
+                    <span class="mono-label">
+                      {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
+                    </span>
+                  </div>
+
+                  <h3 class="card-title">
+                    <a href={`/${post.slug}`} set:html={post.title.rendered} />
+                  </h3>
+
+                  <div class="card-excerpt" set:html={post.excerpt.rendered} />
+
+                  <a href={`/${post.slug}`} class="card-link">
+                    INSPECT SYSTEM &rarr;
+                  </a>
+                </article>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .newspaper-wrapper {
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  .content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .archive-header-banner {
+    text-align: center;
+    border-bottom: 4px solid var(--ink);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .archive-title {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1;
+    margin: 0.5rem 0;
+  }
+
+  .archive-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* Featured Article Styling */
+  .featured-section {
+    border-bottom: 4px solid var(--ink);
+    padding-bottom: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .headline-container {
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 1rem;
+  }
+
+  .featured-headline {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin: 0.5rem 0;
+  }
+
+  .featured-headline a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .featured-headline a:hover {
+    color: var(--accent);
+  }
+
+  .lead-story-container {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .lead-story-col {
+    flex: 1;
+    text-align: justify;
+  }
+
+  .lead-story :global(p) {
+    font-family: serif;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .drop-cap :global(p:first-of-type)::first-letter {
+    font-family: var(--font-serif);
+    font-size: 4.5rem;
+    float: left;
+    line-height: 0.75;
+    padding-bottom: 0.5rem;
+    margin-right: 10px;
+    color: var(--ink);
+    font-weight: 900;
+  }
+
+  .project-link {
+    display: inline-block;
+    background: var(--off-white);
+    color: var(--ink);
+    padding: 0.5rem 1rem;
+    border: 3px solid var(--ink);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-weight: bold;
+    margin-top: 1rem;
+    text-transform: uppercase;
+  }
+
+  .project-link:hover {
+    background: var(--accent);
+    color: var(--off-white);
+  }
+
+  /* Secondary Grid Styling */
+  .archive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .archive-card {
+    border: 2px solid var(--ink);
+    padding: 1.5rem;
+    background: var(--off-white);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .archive-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 0px var(--ink);
+  }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 900;
+    line-height: 1.15;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .card-title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .card-title a:hover {
+    color: var(--accent);
+  }
+
+  .card-excerpt :global(p) {
+    font-family: serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-link {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 2px solid var(--ink);
+    width: fit-content;
+    padding-bottom: 2px;
+  }
+
+  .card-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+  }
+
+  .tagline {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .empty-state {
+    padding: 4rem;
+    text-align: center;
+    border: 2px dashed var(--ink);
+  }
+
+  @media (max-width: 768px) {
+    .lead-story-container {
+      flex-direction: column;
+    }
+  }
+</style>

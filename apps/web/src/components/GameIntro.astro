@@ -1,0 +1,228 @@
+---
+/* GameIntro.astro */
+---
+<div id="game-modal">
+  <div class="modal-card" id="modal-card">
+    <!-- Screen 1: Welcome/Choice -->
+    <div id="screen-welcome" class="modal-screen">
+      <h2 class="modal-header">INTERACTIVE EXPERIENCE</h2>
+      
+      <div class="modal-text">
+        <p>Just want to review my technical expertise? The site functions as a standard portfolio.</p>
+        <p>I also have turned this into an interactive game experience like an escape room.</p>
+      </div>
+
+      <div class="modal-actions">
+        <button id="play-game" class="btn btn-primary">
+          START THE GAME
+        </button>
+        <button id="skip-game" class="btn btn-secondary">
+          JUST SHOW ME THE WORK
+        </button>
+      </div>
+    </div>
+
+    <!-- Screen 2: Instructions -->
+    <div id="screen-instructions" class="modal-screen hidden">
+      <h2 class="modal-header">CLASSIFIED MEMORANDUM</h2>
+      
+      <div class="modal-text">
+      <p>
+      <strong>DATE:</strong> DECEMBER 19, 1989 <br />
+      <strong>TO:</strong> FIELD AGENT / INVESTIGATOR <br />
+      <strong>FROM:</strong> EDITOR-IN-CHIEF, THE DIGITAL CHRONICLE <br />
+      <strong>SUBJECT:</strong> OPERATION CYBORG (DISKETTE RANSOMWARE) <br />
+      </p>
+
+      <p>Panic has hit the teletype networks. Thousands of black 3.5-inch floppy disks marked "AIDS Information Vol. 1" have been delivered by post across the country. Once inserted, computers lock up, demanding a $189 wire transfer to a PO Box in Panama.</p>
+
+      <p>It is the first digital extortion scheme in history—and we believe the perpetrator is transmitting encrypted coordinates through this publication.</p>
+
+      <p>The author of the Cyborg Virus has embedded THREE HIDDEN ANOMALIES across our archived dispatches.</p>
+
+      <p><strong>INVESTIGATIVE DIRECTIVES:</strong></p>
+      <div class="protocol-item">
+      <strong>1. INSPECT THE DISPATCHES:</strong> Examine our wire reports, technical metadata, and editorial records for irregularities (out-of-place dates, strange hex sequences, or corrupted text).
+      </div>
+
+      <div class="protocol-item">
+      <strong>2. ISOLATE THE KEYS:</strong> Each anomaly contains a secret keyword embedded by the suspect.
+      </div>
+
+      <div class="protocol-item">
+      <strong>3. SUBMIT TO TERMINAL:</strong> Open the switchboard terminal and input the three decrypted keys.
+      </div>
+
+      <div class="protocol-item">
+      <strong>4. UNLOCK THE DOSSIER:</strong> Expose the identity of the perpetrator and halt the extortion network before 1990.
+      </div>
+
+      <p><em>The truth is hidden in the newsprint.</em></p>
+      </div>
+
+      <div class="modal-actions">
+        <button id="understood-btn" class="btn btn-primary">
+          UNDERSTOOD (CLOSE BRIEFING)
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initGameModal() {
+    const modal = document.getElementById('game-modal');
+    const playBtn = document.getElementById('play-game');
+    const skipBtn = document.getElementById('skip-game');
+    const understoodBtn = document.getElementById('understood-btn');
+    const welcomeScreen = document.getElementById('screen-welcome');
+    const instructionsScreen = document.getElementById('screen-instructions');
+    const helpTrigger = document.getElementById('trigger-help-modal');
+
+    if (!modal) return;
+
+    const showModal = () => {
+      // Always reset to first screen when opening
+      welcomeScreen?.classList.remove('hidden');
+      instructionsScreen?.classList.add('hidden');
+      modal.classList.add('visible');
+    };
+
+    const closeModal = () => {
+      modal.classList.remove('visible');
+    };
+
+    // Auto-show after 3 seconds if not seen this session
+    if (!sessionStorage.getItem('visited_gazette')) {
+      setTimeout(showModal, 3000);
+    }
+
+    playBtn?.addEventListener('click', () => {
+      welcomeScreen?.classList.add('hidden');
+      instructionsScreen?.classList.remove('hidden');
+    });
+
+    skipBtn?.addEventListener('click', () => {
+      closeModal();
+      sessionStorage.setItem('visited_gazette', 'true');
+    });
+
+    understoodBtn?.addEventListener('click', () => {
+      closeModal();
+      sessionStorage.setItem('visited_gazette', 'true');
+    });
+
+    // 2. Allow triggering from anywhere else in the site
+    window.addEventListener('trigger-game-intro', showModal);
+
+    // 3. Side tab trigger: bypasses welcome, goes straight to instructions
+    const openInstructions = () => {
+      welcomeScreen?.classList.add('hidden');
+      instructionsScreen?.classList.remove('hidden');
+      modal.classList.add('visible');
+    };
+
+    helpTrigger?.addEventListener('click', openInstructions);
+  }
+
+  // Setup on initial load and after Astro view transitions
+  document.addEventListener('astro:page-load', initGameModal);
+</script>
+
+<style>
+  #game-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.7s ease;
+  }
+
+  #game-modal.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-card {
+    background-color: #f4f1ea;
+    padding: 2rem;
+    max-width: 28rem;
+    width: 90%;
+    border: 4px solid #222;
+    font-family: var(--font-mono);
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: 2px solid black;
+    margin-bottom: 1rem;
+  }
+
+  .modal-text p {
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+    text-transform: none;
+  }
+
+  .protocol-item {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    padding-left: 1rem;
+    border-left: 2px solid #222;
+  }
+
+  .protocol-item strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: #b91c1c;
+  }
+
+  .clue-list li + li {
+    margin-top: 0.5rem;
+  }
+
+  .modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .modal-screen.hidden {
+    display: none;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .btn-primary {
+    background-color: black;
+    color: white;
+    font-size: 0.875rem;
+    border: none;
+  }
+  .btn-primary:hover { background-color: #b91c1c; }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: black;
+    font-size: 0.75rem;
+    border: 1px solid black;
+  }
+  .btn-secondary:hover { background-color: #e5e7eb; }
+</style>

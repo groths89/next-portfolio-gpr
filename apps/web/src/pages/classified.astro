@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Classified Archives">
+  <div class="locked-container">
+    <div class="terminal-box">
+      <header class="terminal-header">
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span class="status-text">ENCRYPTED ARCHIVE ACCESS</span>
+        </div>
+        <div class="terminal-controls">
+          <span>_</span><span>□</span><span>×</span>
+        </div>
+      </header>
+      
+      <div id="lock-screen" class="content">
+        <div class="warning-banner">RESTRICTED AREA</div>
+        <p class="instruction">Please enter the 1989 Edition Serial and Origin Year to decrypt.</p>
+        <p class="hint">Format: [SERIAL]-[YEAR]</p>
+        
+        <div class="input-wrapper">
+          <input type="text" id="passcode" placeholder="00000-0000" maxlength="10" autocomplete="off" />
+          <button id="submit-btn">DECRYPT</button>
+        </div>
+        <p id="error-msg" class="error-msg"></p>
+      </div>
+
+      <div id="secret-content" class="content hidden">
+        <h2 class="archive-title">DOSSIER #1989-GPR</h2>
+        <div class="redacted-body">
+          <p>The subject was initialized on <span class="redacted">JUNE 12</span> under the guise of a standard analog transition. Integration between <span class="redacted">HUMAN INTUITION</span> and <span class="redacted">SILICON LOGIC</span> has exceeded all initial projections.</p>
+          
+          <p>Current Mission: Bridge the gap between the <span class="redacted">8-BIT ERA</span> and the modern web stack. Security clearance has been granted for the following repositories...</p>
+          
+          <p class="status-label">STATUS: <span class="blink">ACTIVE</span></p>
+        </div>
+        <a href="/" class="btn-return">Return to Surface</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const passcode = document.getElementById('passcode') as HTMLInputElement;
+  const submitBtn = document.getElementById('submit-btn');
+  const lockScreen = document.getElementById('lock-screen');
+  const secretContent = document.getElementById('secret-content');
+  const errorMsg = document.getElementById('error-msg');
+
+  // Clue matches: NO. 32,841 and 1989 from Masthead
+  const CORRECT_PASS = "32841-1989";
+
+  function checkPass() {
+    if (passcode.value.trim() === CORRECT_PASS) {
+      lockScreen?.classList.add('hidden');
+      secretContent?.classList.remove('hidden');
+    } else {
+      if (errorMsg) errorMsg.textContent = "ACCESS DENIED: VERIFY MASTHEAD DATA.";
+      passcode.value = "";
+    }
+  }
+
+  submitBtn?.addEventListener('click', checkPass);
+  passcode?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') checkPass();
+  });
+</script>
+
+<style>
+  .locked-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0a0a0a;
+    padding: 2rem;
+  }
+  .terminal-box {
+    background: var(--off-white);
+    border: 3px solid var(--ink);
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 15px 15px 0px var(--accent);
+  }
+  .terminal-header {
+    background: var(--ink);
+    color: var(--off-white);
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+  .content { padding: 2rem; text-align: center; }
+  .hidden { display: none !important; }
+  .warning-banner {
+    background: #ce1212;
+    color: white;
+    font-weight: 900;
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-mono);
+  }
+  .input-wrapper {
+    margin-top: 2rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+  input {
+    flex: 1;
+    padding: 0.8rem;
+    border: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    background: transparent;
+  }
+  button {
+    padding: 0.8rem 1.5rem;
+    background: var(--ink);
+    color: var(--off-white);
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-weight: bold;
+  }
+  .error-msg { color: #ce1212; font-family: var(--font-mono); font-size: 0.8rem; margin-top: 1rem; }
+  .redacted { background: var(--ink); color: var(--ink); user-select: none; padding: 0 4px; }
+  .redacted-body { text-align: left; font-family: var(--font-serif); font-size: 1.2rem; line-height: 1.8; }
+  .status-label { margin-top: 2rem; font-family: var(--font-mono); font-weight: bold; }
+  .blink { animation: blink 1s step-end infinite; color: var(--accent); }
+  @keyframes blink { 50% { opacity: 0; } }
+  .btn-return { display: inline-block; margin-top: 2rem; color: var(--ink); font-family: var(--font-mono); font-size: 0.8rem; }
+</style>

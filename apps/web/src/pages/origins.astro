@@ -1,0 +1,256 @@
+---
+import Masthead from '../components/Masthead.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Origins | The Chronicle">
+  <article id="origins-newspaper" class="newspaper-wrapper">
+    <Masthead />
+    <section id="content" class="content-wrapper">
+      <div id="section-1" class="section-1">
+        <div id="sidebar" class="sidebar">
+          <div id="figure-container" class="figure-container">
+            <img id="figure-1" src="/images/newspaper-portrait.jpg" alt="A vintage computer setup" />
+            <p id="figure-1-caption" class="figure-1-caption">
+              Fig 1.0: Early computing setup, circa 1980s. The dawn of the digital age.
+            </p>
+          </div>
+          <div id="tech-stack-container" class="tech-stack-container">
+            <h3 id="technology-heading" class="technology-heading">Foundational Tech</h3>
+            <div id="core-logic" class="core-logic">
+              <p>Early Logic <span class="technology">assembly</span> <span class="technology">fortran</span><span class="technology">cobol</span></p>
+            </div>
+            <div id="interfaces" class="interfaces">
+              <p>Interfaces <span class="technology">cli</span><span class="technology">crt</span><span class="technology">punch cards</span></p>
+            </div>
+          </div>
+        </div>
+        <div id="article" class="article">
+          <div id="headline-container" class="headline-container">
+            <p id="tagline" class="tagline">// Historical Exclusive</p>
+            <h1 id="headline" class="headline">Tracing the Digital Roots</h1>
+            <p id="headline-quote" class="headline-quote">"Every great journey begins with a single byte."</p>
+          </div>
+          <div id="lead-story-container" class="lead-story-container">
+            <div class="lead-story-col">
+              <p class="lead-story drop-cap">
+                Before the sleek interfaces and ubiquitous connectivity, there was a nascent digital world,
+                forged in the crucible of scientific curiosity and military necessity. This page delves into
+                the foundational moments that shaped the technological landscape we inhabit today.
+              </p>
+            </div>
+            <div class="lead-story-col">
+              <p class="lead-story">
+                From the earliest mechanical calculators to the first electronic computers, the path was
+                paved by visionaries who dared to imagine machines that could process information at speeds
+                unimaginable to their predecessors.
+              </p>
+              <p class="lead-story">
+                The very concept of a "program" was revolutionary, allowing complex tasks to be automated
+                and repeated with precision.
+              </p>
+            </div>
+            <div class="lead-story-col">
+              <p class="lead-story">
+                The evolution from vacuum tubes to transistors, and then to integrated circuits, marked
+                exponential leaps in capability and miniaturization, setting the stage for personal computing.
+              </p>
+              <p class="lead-story">
+                This chronicle aims to connect the dots, illustrating how the seemingly disparate
+                innovations of the past converged to create the digital present.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .newspaper-wrapper {
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 0;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 3rem;
+  }
+
+  .edition-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 6vw, 4rem);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1;
+  }
+
+  .edition-meta {
+    display: flex;
+    gap: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    margin-top: 1rem;
+  }
+
+  /* Home Page: Content */
+  .content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .section-1 {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  @media (max-width: 768px) {
+    .section-1 {
+      flex-direction: column;
+    }
+  }
+
+  .article {
+    flex: 1;
+    gap: 1;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 2px solid var(--ink);
+    padding: 0 1.5rem 0 0;
+    flex: 0 0 300px;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      flex: none;
+      width: 100%;
+      border-right: none;
+      border-bottom: 2px solid var(--ink);
+    }
+  }
+
+  .figure-container {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    padding-bottom: 3rem;
+    border-bottom: 3px solid var(--ink);
+  }
+
+  .figure-container img {
+    border: 4px solid var(--ink);
+    padding: 3px;
+  }
+  .figure-container p {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    font-size: 8pt;
+  }
+
+  .headline-container {
+    font-family: var(--font-serif);
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 1.5rem;
+  }
+
+  .drop-cap::first-letter {
+    font-family: var(--font-serif);
+    font-size: 72pt;
+    float: left;
+    line-height: 0.6;
+    padding-bottom: 1.8rem;
+    margin-right: 8px;
+    color: var(--ink);
+    font-weight: 900;
+  }
+  .lead-story-container {
+    display: flex;
+  }
+
+  @media (max-width: 1024px) {
+    .lead-story-container {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+
+  .lead-story-col {
+    flex: 1;
+    text-align: justify;
+    padding: 0 1rem;
+    border-left: 1px solid var(--ink);
+  }
+
+  .lead-story-col:first-child {
+    border-left: none;
+  }
+
+  .lead-story {
+    font-family: serif;
+    font-weight: 100;
+    font-size: 14pt;
+  }
+
+  .tagline {
+    font-family: var(--font-mono);
+    font-size: 9pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+  }
+
+  .headline {
+    text-transform: uppercase;
+    font-size: 78pt;
+    font-weight: 900;
+    line-height: 1;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .headline-quote {
+    text-transform: capitalize;
+    font-style: italic;
+    font-size: 18pt;
+    margin-top: 1rem;
+    color: #858585;
+  }
+
+  .technology-heading {
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+  .technology {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 12pt;
+    border: 1px solid var(--ink);
+  }
+</style>

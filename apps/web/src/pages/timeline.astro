@@ -1,0 +1,323 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Masthead from '../components/Masthead.astro';
+import { getWPPosts, type WPPost } from '../lib/wp';
+import { getGroupedTags } from '../utils/wordpress';
+
+const posts: WPPost[] = await getWPPosts();
+
+posts.forEach(p => {
+  console.log('Post Title:', p.title.rendered);
+  console.log('Grouped Tags:', getGroupedTags(p));
+});
+
+// Filter posts that contain tags in the 'event' tag group
+const eventPosts = posts.filter((post) => {
+  const groupedTags = getGroupedTags(post);
+  return groupedTags['event'] && groupedTags['event'].length > 0;
+});
+
+// Sort events chronologically (oldest to newest)
+eventPosts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+---
+<BaseLayout title="The Timeline | Edition 1989">
+  <article class="newspaper-wrapper">
+    <Masthead />
+
+    <section class="content-wrapper">
+      <div class="archive-header-banner">
+        <p class="tagline">// CHRONOLOGICAL REGISTER</p>
+        <h1 class="archive-title">THE DIGITAL TIMELINE</h1>
+        <p class="archive-subtitle">
+          RECORDED MILESTONES, SYSTEM EVENTS, AND ARCHITECTURAL DISPATCHES
+        </p>
+      </div>
+
+      {eventPosts.length === 0 ? (
+        <div class="empty-state">
+          <p class="mono-label">NO DISPATCHES WITH 'EVENT:' TAGS RETRIEVED FROM THE ARCHIVE.</p>
+        </div>
+      ) : (
+        <div class="timeline-spine">
+          {eventPosts.map((post, index) => {
+            const groupedTags = getGroupedTags(post);
+            const eventTag = groupedTags['event']?.[0] || 'MILESTONE';
+            const year = new Date(post.date).getFullYear();
+            const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
+              month: 'short',
+              day: '2-digit',
+              year: 'numeric'
+            });
+            const isEven = index % 2 === 0;
+
+            return (
+              <div class={`timeline-row ${isEven ? 'left' : 'right'}`}>
+                <div class="time-marker">
+                  <span class="year">{year}</span>
+                  <span class="mono-date">{formattedDate}</span>
+                </div>
+
+                <article class="timeline-card">
+                  <div class="card-header">
+                    <span class="tagline">// {eventTag}</span>
+                    <span class="mono-label">ENTRY #{post.id}</span>
+                  </div>
+
+                  <h2 class="card-title">
+                    <a href={`/${post.slug}`} set:html={post.title.rendered} />
+                  </h2>
+
+                  <div class="card-excerpt drop-cap" set:html={post.excerpt.rendered} />
+
+                  <a href={`/${post.slug}`} class="project-link">
+                    READ DISPATCH &rarr;
+                  </a>
+                </article>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .newspaper-wrapper {
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  .content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .archive-header-banner {
+    text-align: center;
+    border-bottom: 4px solid var(--ink);
+    padding-bottom: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .archive-title {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1;
+    margin: 0.5rem 0;
+  }
+
+  .archive-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* Timeline Spine & Layout */
+  .timeline-spine {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    padding: 1rem 0;
+  }
+
+  .timeline-spine::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--ink);
+    transform: translateX(-50%);
+  }
+
+  .timeline-row {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    position: relative;
+  }
+
+  .timeline-row.left {
+    flex-direction: row-reverse;
+  }
+
+  .timeline-row .timeline-card {
+    width: 45%;
+  }
+
+  .timeline-row .time-marker {
+    width: 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    background: var(--off-white);
+    padding: 0.5rem 0;
+  }
+
+  .timeline-row::after {
+    content: '';
+    width: 45%;
+  }
+
+  /* Time Marker Elements */
+  .year {
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .mono-date {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    margin-top: 0.2rem;
+  }
+
+  /* Timeline Cards */
+  .timeline-card {
+    border: 2px solid var(--ink);
+    padding: 1.5rem;
+    background: var(--off-white);
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .timeline-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 0px var(--ink);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    font-weight: 900;
+    line-height: 1.1;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .card-title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .card-title a:hover {
+    color: var(--accent);
+  }
+
+  .card-excerpt :global(p) {
+    font-family: serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .drop-cap :global(p:first-of-type)::first-letter {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    float: left;
+    line-height: 0.8;
+    margin-right: 6px;
+    color: var(--ink);
+    font-weight: 900;
+  }
+
+  .project-link {
+    display: inline-block;
+    background: var(--off-white);
+    color: var(--ink);
+    padding: 0.4rem 0.8rem;
+    border: 2px solid var(--ink);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .project-link:hover {
+    background: var(--accent);
+    color: var(--off-white);
+  }
+
+  .tagline {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+  }
+
+  .empty-state {
+    padding: 4rem;
+    text-align: center;
+    border: 2px dashed var(--ink);
+  }
+
+  /* Responsive Mobile Layout */
+  @media (max-width: 860px) {
+    .timeline-spine::before {
+      left: 20px;
+    }
+
+    .timeline-row,
+    .timeline-row.left {
+      flex-direction: column;
+      align-items: flex-start;
+      padding-left: 45px;
+    }
+
+    .timeline-row .timeline-card,
+    .timeline-row::after {
+      width: 100%;
+    }
+
+    .timeline-row .time-marker {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: auto;
+      align-items: flex-start;
+      background: transparent;
+      padding: 0;
+    }
+
+    .year {
+      font-size: 1.5rem;
+    }
+
+    .mono-date {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,161 @@
+---
+// components/Masthead.astro
+---
+<section id="mainhead" class="header-wrapper">
+	<header id="masthead" class="masthead">
+		<div id="dateline" class="dateline">
+			<div id="left-ear">
+				<p>VOL. LXIV ... NO. 32,841</p>
+			</div>
+			<div id="center" class="centerhead">
+				<p>Late Edition: Clear, Mild, Tonight; Sunny Tomorrow</p>
+			</div>
+			<div id="right-ear">
+				<p>Thursday, June 12, 1989</p>
+			</div>
+		</div>
+		<div id="nameplate" class="nameplate">
+			<h1>The Digital Chronicle</h1>
+		</div>
+		<div id="sectionheader" class="sectionheader">
+			<div class="edition-bar">
+				<span class="edition-item">NEW YORK EDITION</span>
+				<span class="edition-divider">•</span>
+				<span class="edition-item">PRICE: $1.50</span>
+				<span class="edition-divider">•</span>
+				<span class="edition-item">ESTABLISHED 1989</span>
+				<span class="edition-divider">•</span>
+				<span class="edition-item">ISSN 1040-6190</span>
+			</div>
+		</div>
+	</header>
+</section>
+<style>
+  /* Home Page: Masthead */
+	.masthead {
+		position: relative;
+		padding: 0 1.5rem;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 100%;
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+
+	.edition-title {
+		font-family: var(--font-serif);
+	}
+
+	.dateline {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+		padding: 0.5rem 0;
+		align-items: center;
+	}
+
+	.dateline div {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.dateline div p {
+		font-family: var(--font-mono);
+		font-size: 9pt;
+		font-weight: 100;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		color: #646262;
+	}
+
+	.dateline div.centerhead {
+		font-family: var(--font-serif);
+		font-style: italic;
+	}
+
+	.nameplate {
+		width: 100%;
+		text-align: center;
+		margin-top: 1.5rem;
+		font-size: 40pt;
+		text-transform: uppercase;
+		font-weight: 900;
+		font-family: var(--font-serif);
+		line-height: 1;
+		border-bottom: 5px solid var(--ink);
+		padding-bottom: 2rem;
+	}
+
+	.sectionheader {
+		width: 100%;
+		border-top: 1px solid var(--ink);
+		border-bottom: 1px solid var(--ink);
+		margin-top: 0.5rem;
+		padding: 0.5rem 0;
+	}
+
+	.edition-bar {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 1.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: var(--ink);
+		letter-spacing: 1px;
+	}
+
+	.edition-divider {
+		color: var(--accent);
+	}
+
+	@media (max-width: 768px) {
+		.edition-bar {
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			font-size: 0.65rem;
+		}
+	}
+
+	.unordered-list {
+		display: flex;
+		justify-content: center;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.list-item {
+		margin: 0 1.5rem;
+	}
+
+	.list-item a {
+		text-decoration: none;
+		color: var(--ink);
+		font-family: var(--font-mono);
+		font-weight: 600;
+		text-transform: uppercase;
+		font-size: 0.9rem;
+	}
+
+	.list-item a:hover {
+		color: var(--accent);
+	}
+	.header-wrapper {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
+	
+	@media (max-width: 768px) {
+		.header-wrapper {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+</style>

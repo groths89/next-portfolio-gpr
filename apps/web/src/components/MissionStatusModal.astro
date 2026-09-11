@@ -1,0 +1,216 @@
+---
+/* MissionStatusModal.astro */
+---
+<div id="mission-status-modal">
+  <div class="modal-card" id="mission-status-modal-card">
+    <!-- Screen 1: Mission Status Overview -->
+    <div id="screen-status-overview" class="modal-screen">
+      <h2 class="modal-header">MISSION CONTROL: STATUS</h2>
+      
+      <div class="modal-text">
+        <p>Your current objective is to collect three hidden keys to unlock the Classified Archive.</p>
+        <p><strong>CURRENT STATUS:</strong> <span id="modal-key-count">0</span>/3 KEYS COLLECTED</p>
+
+        <h3>Collected Keys:</h3>
+        <ul class="clue-list">
+          <li id="key-slot-1">Key 1: <span class="key-value">[PENDING]</span></li>
+          <li id="key-slot-2">Key 2: <span class="key-value">[PENDING]</span></li>
+          <li id="key-slot-3">Key 3: <span class="key-value">[PENDING]</span></li>
+        </ul>
+      </div>
+
+      <div class="modal-actions">
+        <button id="enter-key-btn" class="btn btn-primary">
+          ENTER KEY
+        </button>
+        <button id="close-status-modal-btn" class="btn btn-secondary">
+          CLOSE
+        </button>
+      </div>
+    </div>
+
+    <!-- Screen 2: Key Entry (simplified for now) -->
+    <div id="screen-key-entry" class="modal-screen hidden">
+      <h2 class="modal-header">ENTER KEY PHRASE</h2>
+      
+      <div class="modal-text">
+        <p>Type the secret keyphrase you discovered into the field below. Case-sensitive input required.</p>
+        <input type="text" id="key-input" class="key-input" placeholder="Type key here..." />
+        <p id="key-feedback" class="key-feedback"></p>
+      </div>
+
+      <div class="modal-actions">
+        <button id="submit-key-btn" class="btn btn-primary">
+          SUBMIT KEY
+        </button>
+        <button id="back-to-status-btn" class="btn btn-secondary">
+          BACK TO STATUS
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initMissionStatusModal() {
+    const modal = document.getElementById('mission-status-modal');
+    const statusScreen = document.getElementById('screen-status-overview');
+    const keyEntryScreen = document.getElementById('screen-key-entry');
+    
+    const triggerBtn = document.getElementById('trigger-mission-modal');
+    const enterKeyBtn = document.getElementById('enter-key-btn');
+    const closeBtn = document.getElementById('close-status-modal-btn');
+    const submitKeyBtn = document.getElementById('submit-key-btn');
+    const backToStatusBtn = document.getElementById('back-to-status-btn');
+    const keyInput = document.getElementById('key-input') as HTMLInputElement;
+    const keyFeedback = document.getElementById('key-feedback') as HTMLParagraphElement;
+
+    if (!modal) return;
+
+    const showModal = (screenToShow: HTMLElement) => {
+      statusScreen?.classList.add('hidden');
+      keyEntryScreen?.classList.add('hidden');
+      screenToShow.classList.remove('hidden');
+      modal.classList.add('visible');
+    };
+
+    const closeModal = () => {
+      modal.classList.remove('visible');
+      keyInput.value = ''; // Clear input on close
+      keyFeedback.textContent = ''; // Clear feedback
+    };
+
+    // Open this modal to the status screen
+    triggerBtn?.addEventListener('click', () => showModal(statusScreen!));
+    enterKeyBtn?.addEventListener('click', () => showModal(keyEntryScreen!));
+    closeBtn?.addEventListener('click', closeModal);
+    backToStatusBtn?.addEventListener('click', () => showModal(statusScreen!));
+
+    // TODO: Implement actual key submission logic later
+    submitKeyBtn?.addEventListener('click', () => {
+      const enteredKey = keyInput.value.trim();
+      if (enteredKey) {
+        keyFeedback.textContent = `Attempting to submit: "${enteredKey}"... (Logic not yet implemented)`;
+        // In a real scenario, you'd send this to a state management or server.
+      } else {
+        keyFeedback.textContent = 'Please enter a key.';
+      }
+    });
+
+    // This ensures the key count displayed in the modal updates
+    window.addEventListener('update-key-count', (event) => {
+      const customEvent = event as CustomEvent;
+      const keyCountSpan = document.getElementById('modal-key-count');
+      if (keyCountSpan) {
+        keyCountSpan.textContent = customEvent.detail.count;
+      }
+      // You might also update individual key slots here if you store them.
+    });
+  }
+
+  // Setup on initial load and after Astro view transitions
+  document.addEventListener('astro:page-load', initMissionStatusModal);
+</script>
+<style>
+  #mission-status-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  #mission-status-modal.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-card {
+    background-color: #f4f1ea;
+    padding: 2rem;
+    max-width: 30rem;
+    width: 90%;
+    border: 4px solid #222;
+    font-family: var(--font-mono);
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+  }
+
+  .modal-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: 2px solid black;
+    margin-bottom: 1rem;
+  }
+
+  .modal-text p {
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .clue-list {
+    list-style: none;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(0,0,0,0.05);
+    border: 1px dashed #222;
+  }
+
+  .key-value {
+    color: #b91c1c;
+    font-weight: bold;
+  }
+
+  .key-input {
+    width: 100%;
+    padding: 0.75rem;
+    background: #fff;
+    border: 2px solid #222;
+    font-family: var(--font-mono);
+    margin-bottom: 0.5rem;
+  }
+
+  .key-feedback {
+    font-size: 0.8rem;
+    min-height: 1.2rem;
+    color: #b91c1c;
+  }
+
+  .modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background-color: black;
+    color: white;
+    border: none;
+  }
+  .btn-primary:hover { background-color: #b91c1c; }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: black;
+    border: 1px solid black;
+  }
+  .btn-secondary:hover { background-color: #ddd; }
+</style>

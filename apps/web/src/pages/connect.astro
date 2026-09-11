@@ -1,0 +1,532 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Masthead from '../components/Masthead.astro';
+import { library, icon } from '@fortawesome/fontawesome-svg-core';
+import { faEnvelope, faRss, faPaperPlane, faKey, faLock, faTerminal, faGlobe } from '@fortawesome/free-solid-svg-icons';
+
+library.add(faEnvelope, faRss, faPaperPlane, faKey, faLock, faTerminal, faGlobe);
+
+const emailIcon = icon({ prefix: 'fas', iconName: 'envelope' }).html.join('');
+const rssIcon = icon({ prefix: 'fas', iconName: 'rss' }).html.join('');
+const sendIcon = icon({ prefix: 'fas', iconName: 'paper-plane' }).html.join('');
+const keyIcon = icon({ prefix: 'fas', iconName: 'key' }).html.join('');
+const terminalIcon = icon({ prefix: 'fas', iconName: 'terminal' }).html.join('');
+const lockIcon = icon({ prefix: 'fas', iconName: 'lock' }).html.join('');
+const globeIcon = icon({ prefix: 'fas', iconName: 'globe' }).html.join('');
+---
+<BaseLayout title="Connect | Edition 1989">
+  <article id="connect-page" class="newspaper-wrapper">
+    <Masthead />
+
+    <section id="content" class="content-wrapper">
+      <!-- Broadside Header Banner -->
+      <div class="archive-header-banner">
+        <p class="tagline">// TELEGRAPH & WIRE TRANSMISSIONS</p>
+        <h1 class="archive-title">CENTRAL DISPATCH BUREAU</h1>
+        <p class="archive-subtitle">
+          DIRECT FREQUENCIES, ENCRYPTED CHANNELS, AND PUBLIC COMMUNICATIONS
+        </p>
+      </div>
+
+      <!-- Main Layout Grid -->
+      <div class="connect-grid">
+        
+        <!-- Column 1: Directory & Direct Bands (Classified Card Style) -->
+        <aside class="connect-column side-col">
+          <div class="connect-card">
+            <div class="card-header">
+              <span class="tagline">// FREQUENCIES</span>
+              <span class="mono-label"><Fragment set:html={globeIcon} /> PUBLIC BANDS</span>
+            </div>
+            <p class="card-quote">"Direct feeds to external archives and remote terminals."</p>
+            <ul class="directory-list">
+              <li>
+                <span class="dir-label">GITHUB</span>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer">/user-handle &rarr;</a>
+              </li>
+              <li>
+                <span class="dir-label">LINKEDIN</span>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">/in/user-handle &rarr;</a>
+              </li>
+              <li>
+                <span class="dir-label">ELECTRONIC MAIL</span>
+                <a href="mailto:editor@domain.com">editor@domain.com &rarr;</a>
+              </li>
+              <li>
+                <span class="dir-label">SYNDICATION</span>
+                <a href="/rss.xml">/rss.xml &rarr;</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- PGP / Security Box -->
+          <div class="connect-card accent-card">
+            <div class="card-header border-light">
+              <span class="tagline light-text">// SECURITY PROTOCOL</span>
+              <span class="mono-label light-text"><Fragment set:html={lockIcon} /> ENCRYPTED</span>
+            </div>
+            <p class="mono-text light-text">For classified inquiries, encrypt transmissions using the public key below:</p>
+            <div class="key-box">
+              <p>PGP KEY ID: <span>0x8F92C1A4</span></p>
+              <p>FINGERPRINT: <span>3A8F 90B2 11C4 88E0</span></p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Column 2: Central Wire Transmission Form (Lead Story Style) -->
+        <main class="connect-column main-col">
+          <div class="connect-card lead-card">
+            <div class="card-header">
+              <span class="tagline">// FORM #89-C</span>
+              <span class="mono-label">TRANSMISSION TERMINAL</span>
+            </div>
+            <h2 class="form-title">TRANSMIT TELEGRAM</h2>
+            <p class="form-instructions drop-cap">
+              Readers, agents, and collaborators are invited to send direct dispatches to the editor's desk. High-priority inquiries regarding system architecture, software development, or technical consulting receive immediate queue routing.
+            </p>
+
+            <form class="telegraph-form" action="https://formspree.io/f/your-id" method="POST">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="sender-name">SENDER IDENTIFICATION</label>
+                  <input type="text" id="sender-name" name="name" required placeholder="e.g. AGENT J. DOE" />
+                </div>
+                <div class="form-group">
+                  <label for="return-address">RETURN ELECTRONIC MAIL</label>
+                  <input type="email" id="return-address" name="email" required placeholder="name@domain.com" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="dispatch-subject">SUBJECT / CATEGORY</label>
+                <select id="dispatch-subject" name="subject">
+                  <option value="general">GENERAL INQUIRY</option>
+                  <option value="consulting">SOFTWARE ARCHITECTURE / CONSULTING</option>
+                  <option value="tip">TECHNICAL TIP / CORRECTION</option>
+                  <option value="press">PRESS / BROADCAST</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="dispatch-body">DISPATCH MESSAGE</label>
+                <textarea id="dispatch-body" name="message" rows="6" required placeholder="TYPE WIRE MESSAGE HERE..."></textarea>
+              </div>
+
+              <button type="submit" class="submit-btn">
+                <span>SEND TRANSMISSION</span>
+                <Fragment set:html={sendIcon} />
+              </button>
+            </form>
+          </div>
+        </main>
+
+        <!-- Column 3: Bureau Status & Operator Specs (Sidebar Style) -->
+        <aside class="connect-column side-col">
+          <div class="connect-card">
+            <div class="figure-container">
+              <img id="figure-1" src="/images/newspaper-portrait.jpg" alt="Bureau Switchboard" />
+              <p class="figure-caption">
+                Fig 1.0: Central Telegraph Office. Dispatches logged 24 hours a day. Circa 1989.
+              </p>
+            </div>
+
+            <div class="tech-stack-container">
+              <h3 class="technology-heading">SYSTEM METRICS</h3>
+              <ul class="metrics-list">
+                <li>RESPONSE LATENCY <span>&lt; 24 HRS</span></li>
+                <li>OPERATIONAL BANDS <span>EST / UTC-5</span></li>
+                <li>SPAM FILTER <span>STRICT / ACTIVE</span></li>
+                <li>SWITCHBOARD <span>ONLINE</span></li>
+              </ul>
+            </div>
+
+            <div class="tech-stack-container">
+              <h3 class="technology-heading">SUPPORTED PROTOCOLS</h3>
+              <div class="tag-cloud">
+                <span class="technology">SMTP</span>
+                <span class="technology">HTTPS</span>
+                <span class="technology">PGP</span>
+                <span class="technology">MATRIX</span>
+                <span class="technology">RSS 2.0</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+
+      <!-- Ticker Footer -->
+      <footer class="section-3">
+        <div class="ticker-content">
+          <div><span class="tagline">BUREAU TICKER:</span> ALL COPPER LINES CLEAR</div>
+          <div>BAUD RATE: 9600 BPS</div>
+          <div>STATUS: OPERATIONAL</div>
+          <div class="buttons">
+            <Fragment set:html={rssIcon} />
+            <Fragment set:html={emailIcon} />
+          </div>
+        </div>
+      </footer>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .newspaper-wrapper {
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  .content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Shared Header Banner */
+  .archive-header-banner {
+    text-align: center;
+    border-bottom: 4px solid var(--ink);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .archive-title {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 900;
+    line-height: 1;
+    margin: 0.5rem 0;
+  }
+
+  .archive-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* Grid Layout */
+  .connect-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.8fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .connect-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* Card Components */
+  .connect-card {
+    border: 2px solid var(--ink);
+    padding: 1.25rem;
+    background: var(--off-white);
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.05);
+  }
+
+  .lead-card {
+    border: 3px solid var(--ink);
+    padding: 1.75rem;
+  }
+
+  .accent-card {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-header.border-light {
+    border-bottom-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .card-quote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    color: #444;
+  }
+
+  /* Directory Links */
+  .directory-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .directory-list li {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px dashed var(--ink);
+    padding-bottom: 0.4rem;
+  }
+
+  .dir-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .directory-list a {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .directory-list a:hover {
+    color: var(--accent);
+  }
+
+  /* Form Styling */
+  .form-title {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-instructions {
+    font-family: serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .drop-cap::first-letter {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    float: left;
+    line-height: 0.75;
+    margin-right: 6px;
+    color: var(--ink);
+    font-weight: 900;
+  }
+
+  .telegraph-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .form-group label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--ink);
+  }
+
+  .form-group input, 
+  .form-group select, 
+  .form-group textarea {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 0.6rem;
+    border: 2px solid var(--ink);
+    background: var(--off-white);
+    color: var(--ink);
+    border-radius: 0;
+    outline: none;
+  }
+
+  .form-group input:focus, 
+  .form-group select:focus, 
+  .form-group textarea:focus {
+    background: #ffffff;
+    box-shadow: 3px 3px 0px var(--ink);
+  }
+
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--ink);
+    color: var(--off-white);
+    padding: 0.8rem 1.2rem;
+    border: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .submit-btn:hover {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+    box-shadow: 3px 3px 0px var(--ink);
+  }
+
+  /* Side Column Elements */
+  .figure-container {
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 0.8rem;
+  }
+
+  .figure-container img {
+    width: 100%;
+    border: 2px solid var(--ink);
+    padding: 2px;
+  }
+
+  .figure-caption {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+  }
+
+  .tech-stack-container {
+    margin-top: 1rem;
+  }
+
+  .technology-heading {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 900;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .metrics-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .metrics-list li {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    border-bottom: 1px solid var(--ink);
+    padding: 0.3rem 0;
+  }
+
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .technology {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 3px 6px;
+    border: 1px solid var(--ink);
+  }
+
+  /* Key Box for PGP */
+  .key-box {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid #ffffff;
+    padding: 0.6rem;
+    margin-top: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+  }
+
+  .key-box span {
+    font-weight: bold;
+  }
+
+  /* Utility Classes */
+  .tagline {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .light-text { color: #ffffff !important; }
+
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+  }
+
+  .mono-text {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  /* Bottom Ticker */
+  .section-3 {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .ticker-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .buttons :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 960px) {
+    .connect-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

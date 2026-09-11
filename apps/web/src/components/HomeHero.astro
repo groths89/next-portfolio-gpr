@@ -1,0 +1,31 @@
+---
+// components/HomeHero.astro
+---
+<section id="home" class="page-selection hero-layout">
+	<div class="hero-text-container">
+		<h1 class="hero-title">Born for the Web.</h1>
+		<p class="hero-subtitle">Est. June 12, 1989</p>
+	</div>
+</section>
+<style>
+	/* Home Page: Hero Layout */
+	.hero-layout {
+		text-align: center;
+		align-items: center;
+		gap: 3rem;
+	}
+
+	.hero-title {
+		font-family: var(--font-serif);
+		font-size: clamp(3rem, 8vw, 6rem);
+		line-height: 0.9;
+	}
+
+	.hero-subtitle {
+		font-family: var(--font-mono);
+		font-size: 1rem;
+		letter-spacing: 3px;
+		margin-top: 1rem;
+		text-transform: uppercase;
+	}
+</style>

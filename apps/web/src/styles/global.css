@@ -1,0 +1,230 @@
+/** 
+* src/styles/global.css
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,700;0,900;1,700&family=Inter:wght@400;600&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+:root {
+  --off-white: #f8f7f2;
+  --ink: #1a1a1a;
+  --accent: #008080;
+  --border: 1px solid #1a1a1a;
+  --font-serif: 'Playfair Display SC', serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --flip-duration: 0.8s;
+  --flip-easing: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Mission Control Tab Styles (Moved from GameIntro.astro) */
+#mission-control-tab {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1001; /* Ensure it's above other content and modals */
+}
+
+#trigger-mission-modal {
+  background-color: var(--ink);
+  opacity: 0.8;
+  color: var(--off-white);
+  border: 2px solid var(--ink);
+  border-right: none;
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  writing-mode: vertical-rl;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  box-shadow: -4px 0px 10px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease, background-color 0.2s;
+}
+
+#trigger-mission-modal:hover {
+  background-color: #b91c1c;
+  transform: translateY(-1%) translateX(-1px);
+}
+
+#trigger-help-modal {
+  background-color: var(--ink);
+  opacity: 0.8;
+  color: var(--off-white);
+  border: 2px solid var(--ink);
+  border-right: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  writing-mode: vertical-rl;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  box-shadow: -4px 0px 10px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease, background-color 0.2s;
+}
+
+#trigger-help-modal:hover {
+  background-color: #b91c1c;
+  transform: translateY(-1%) translateX(-1px);
+}
+
+.mission-icon {
+  writing-mode: horizontal-tb;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.mission-label {
+  font-weight: bold;
+  color: #fff;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  filter: url(#grain);
+  opacity: 0.4;
+}
+
+body {
+  background-color: var(--off-white);
+  background-image: radial-gradient(circle, rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: var(--ink);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+.newspaper-wrapper {
+	width: 100%;
+	min-height: 100vh;
+}
+
+.page-selection {
+  min-height: 100vh;
+  padding: 5rem 10%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  border-bottom: var(--border);
+}
+
+::view-transition-old(newspaper-body) {
+  animation: var(--flip-duration) var(--flip-easing) both flip-out;
+  transform-origin: left center;
+}
+
+::view-transition-new(newspaper-body) {
+  animation: var(--flip-duration) var(--flip-easing) both flip-in;
+  transform-origin: right center;
+}
+
+@keyframes flip-out {
+  0% {
+    transform: rotateY(0);
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(0.7);
+  }
+  100% {
+    transform: rotateY(-180deg);
+    filter: brightness(1);
+    opacity: 0;
+  }
+}
+
+@keyframes flip-in {
+  0% {
+    transform: rotateY(180deg);
+    opacity: 0;
+    filter: brightness(0.7);
+  }
+  100% {
+    transform: rotateY(0);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes paperFlip {
+  0% {
+    transform: rotateY(0deg);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(0.8); /* Shadow in the fold */
+  }
+  100% {
+    transform: rotateY(-180deg);
+    opacity: 0;
+    filter: brightness(1);
+  }
+}
+
+@keyframes paperEnter {
+  0% {
+    transform: rotateY(180deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+/* Custom Astro Transition Definition */
+.page-flip-exit {
+  animation: paperFlip 0.6s ease-in forwards;
+  transform-origin: left center;
+}
+
+.page-flip-enter {
+  animation: paperEnter 0.6s ease-out forwards;
+  transform-origin: right center;
+}
+
+main::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    transparent 45%, 
+    rgba(255,255,255,0.2) 50%, 
+    transparent 55%
+  );
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+}
+
+/* Only trigger the sheen during the flip */
+html:active main::after {
+  opacity: 1;
+}
+
+/* Global utility for hidden elements */
+.hidden {
+  display: none !important;
+}

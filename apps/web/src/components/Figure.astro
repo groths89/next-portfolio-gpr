@@ -1,0 +1,25 @@
+---
+interface Props {
+  src: string,
+  name: string,
+  caption: string
+}
+
+const { src, name, caption } = Astro.props;
+---
+
+<div class="portrait-container">
+  <div class="pixel-frame">
+    <div class="scanline-overlay"></div>
+    <img src={src} alt={name} />
+  </div>
+  <div class="name-plate">
+  <span class="bracket">[</span>
+    <h3 class="name-text">{name}</h3>
+    <span class="bracket">]</span>
+  </div>
+</div>
+
+<style>
+
+</style>

@@ -1,0 +1,8 @@
+<script>
+  // This script runs on every page load thanks to Astro's transitions
+  document.addEventListener('astro:after-preparation', () => {
+    const audio = new Audio('/sounds/paper-flip.mp3');
+    audio.volume = 0.2; // Keep it subtle!
+    audio.play();
+  });
+</script>
