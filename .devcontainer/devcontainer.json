@@ -1,0 +1,32 @@
+{
+    "name": "Astro App",
+    "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "settings": {},
+            "extensions": [
+                "formulahendry.auto-rename-tag",
+                "streetsidesoftware.code-spell-checker",
+                "ms-azuretools.vscode-docker",
+                "dbaeumer.vscode-eslint",
+                "hashicorp.terraform",
+                "heybourn.headwind",
+                "bradlc.vscode-tailwindcss",
+                "HTMLHint.vscode-htmlhint",
+                "esbenp.prettier-vscode",
+                "kamikillerto.vscode-colorize",
+                "wk-j.save-and-run",
+                "shd101wyy.markdown-preview-enhanced",
+                "mikestead.dotenv",
+                "patbenatar.advanced-new-file",
+                "astro-build.astro-vscode"
+            ]
+        }
+    },
+    "remoteUser": "node",
+    "postCreateCommand": "npm install",
+    "forwardPorts": [
+        4321
+    ]
+}
