@@ -1,0 +1,160 @@
+---
+
+---
+
+<section class="switchboard-terminal" aria-labelledby="terminal-title">
+  <header class="terminal-bar">
+    <span>CHRONICLE SWITCHBOARD 1989</span><span>SECURE SESSION</span>
+  </header>
+  <div class="terminal-screen">
+    <h2 id="terminal-title">KEY AUTHORIZATION</h2>
+    <p>SYSTEM READY. ENTER RECOVERED SECURITY KEYS.</p>
+    <ol id="terminal-log" class="terminal-log">
+      <li>ENTER KEY 1: <span>[PENDING]</span></li>
+      <li>ENTER KEY 2: <span>[PENDING]</span></li>
+      <li>ENTER KEY 3: <span>[PENDING]</span></li>
+    </ol>
+    <form id="terminal-key-form" class="terminal-entry">
+      <label for="terminal-key-input">C:\KEYS&gt;</label>
+      <input id="terminal-key-input" type="text" autocomplete="off" autofocus />
+    </form>
+    <p id="terminal-message" class="terminal-message" aria-live="polite">
+      AWAITING KEY 1.
+    </p>
+  </div>
+</section>
+
+<script>
+  function initSwitchboardTerminal() {
+    const form = document.getElementById(
+      "terminal-key-form",
+    ) as HTMLFormElement | null;
+    const input = document.getElementById(
+      "terminal-key-input",
+    ) as HTMLInputElement | null;
+    const message = document.getElementById("terminal-message");
+    const log = document.getElementById("terminal-log");
+    if (
+      !form ||
+      !input ||
+      !message ||
+      !log ||
+      form.dataset.initialized === "true"
+    )
+      return;
+
+    const keys = ["TROY", "POSTAL", "RANSOM"];
+    const foundKeys = JSON.parse(
+      localStorage.getItem("discovered_keys") || "[]",
+    ) as number[];
+    let expectedIndex = keys.findIndex(
+      (_, index) => !foundKeys.includes(index + 1),
+    );
+    if (expectedIndex === -1) expectedIndex = keys.length;
+
+    const render = () => {
+      Array.from(log.children).forEach((item, index) => {
+        const value = item.querySelector("span");
+        if (value)
+          value.textContent = foundKeys.includes(index + 1)
+            ? "[ACCEPTED]"
+            : "[PENDING]";
+      });
+      message.textContent =
+        expectedIndex === keys.length
+          ? "ALL KEYS ACCEPTED. DOSSIER ACCESS AUTHORIZED."
+          : `AWAITING KEY ${expectedIndex + 1}.`;
+      input.disabled = expectedIndex === keys.length;
+    };
+
+    render();
+    form.dataset.initialized = "true";
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (input.value.trim().toUpperCase() !== keys[expectedIndex]) {
+        message.textContent = "ACCESS DENIED. VERIFY THE CASE FILES.";
+        input.value = "";
+        return;
+      }
+      foundKeys.push(expectedIndex + 1);
+      localStorage.setItem("discovered_keys", JSON.stringify(foundKeys));
+      expectedIndex += 1;
+      input.value = "";
+      document
+        .getElementById("key-count")
+        ?.replaceChildren(String(foundKeys.length));
+      window.dispatchEvent(
+        new CustomEvent("update-key-count", {
+          detail: { count: foundKeys.length },
+        }),
+      );
+      render();
+    });
+  }
+
+  document.addEventListener("astro:page-load", initSwitchboardTerminal);
+</script>
+
+<style>
+  .switchboard-terminal {
+    background: #101d13;
+    border: 4px solid #53604e;
+    box-shadow: 8px 8px 0 #111;
+    color: #83ff93;
+    font-family: var(--font-mono);
+  }
+  .terminal-bar {
+    background: #53604e;
+    color: #ecf1df;
+    display: flex;
+    font-size: 0.62rem;
+    justify-content: space-between;
+    padding: 0.35rem 0.5rem;
+  }
+  .terminal-screen {
+    min-height: 320px;
+    padding: 1rem;
+    text-shadow: 0 0 5px rgba(131, 255, 147, 0.65);
+  }
+  .terminal-screen h2 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  .terminal-screen p {
+    font-size: 0.7rem;
+    line-height: 1.45;
+  }
+  .terminal-log {
+    border-bottom: 1px solid rgba(131, 255, 147, 0.5);
+    border-top: 1px solid rgba(131, 255, 147, 0.5);
+    list-style: none;
+    margin: 1rem 0;
+    padding: 0.65rem 0;
+  }
+  .terminal-log li + li {
+    margin-top: 0.45rem;
+  }
+  .terminal-log span {
+    color: #d8ff78;
+  }
+  .terminal-entry {
+    align-items: center;
+    display: flex;
+    font-size: 0.8rem;
+    gap: 0.4rem;
+  }
+  .terminal-entry input {
+    background: transparent;
+    border: 0;
+    color: #83ff93;
+    flex: 1;
+    font: inherit;
+    min-width: 0;
+    outline: 0;
+    text-transform: uppercase;
+  }
+  .terminal-message {
+    margin-top: 1rem;
+    min-height: 2rem;
+  }
+</style>

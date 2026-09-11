@@ -1,0 +1,184 @@
+---
+
+---
+
+<section class="hex-puzzle" aria-labelledby="hex-puzzle-title">
+  <header class="hex-header">
+    <p>TECHNICAL METADATA / CONTINUOUS FEED</p>
+    <h2 id="hex-puzzle-title">The Hexadecimal Teletype</h2>
+    <p>CASE FILE 02 / SOURCE: DOT-MATRIX PRINTER</p>
+  </header>
+
+  <p class="crossword-link">
+    CROSSWORD CROSS-REFERENCE: inspect the answer marked in red ink.
+  </p>
+
+  <p class="printer-hint">PRINTER STATUS: continuous-feed output has been routed to the evidence desk.</p>
+
+  <section class="ascii-reference" aria-labelledby="ascii-title">
+    <h3 id="ascii-title">MS-DOS CHARACTER CONVERSION REFERENCE</h3>
+    <details>
+      <summary>Open reference card</summary>
+      <p>HEX / CHARACTER</p>
+      <dl>
+        {
+          Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map((character, index) => (
+            <div>
+              <dt>{(index + 65).toString(16).toUpperCase()}</dt>
+              <dd>{character}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </details>
+  </section>
+
+  <p class="terminal-direction">
+    Record the decoded key, then enter it at the switchboard terminal.
+  </p>
+</section>
+
+<style>
+  .hex-puzzle {
+    border: 3px solid var(--ink);
+    margin: 0;
+    padding: 1rem;
+  }
+  .hex-header {
+    border-bottom: 3px double var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    padding-bottom: 0.6rem;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .hex-header h2 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.5rem, 5vw, 2.4rem);
+    line-height: 1;
+    margin: 0.35rem 0;
+  }
+  .crossword-link {
+    border-bottom: 1px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1.4;
+    padding: 0.75rem 0;
+  }
+  .printer-feed {
+    background: #ece8dd;
+    border: 1px dashed var(--ink);
+    font-family: var(--font-mono);
+    font-size: clamp(0.8rem, 3vw, 1.1rem);
+    letter-spacing: 0.08em;
+    line-height: 1.7;
+    margin-top: 1rem;
+    padding: 0.9rem;
+    text-align: center;
+  }
+  .printer-hint {
+    margin-top: 1rem;
+  }
+  .printer-hint summary {
+    background: var(--ink);
+    color: var(--off-white);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.55rem 0.7rem;
+    text-transform: uppercase;
+  }
+  .printer-feed p {
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+  }
+  .printer-hint { background: #ece8dd; border: 1px dashed var(--ink); font-family: var(--font-mono); font-size: 0.68rem; line-height: 1.45; margin-top: 1rem; padding: 0.75rem; text-transform: uppercase; }
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    margin-top: 0.55rem;
+    text-transform: uppercase;
+  }
+  .ascii-reference dl {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    margin-top: 0.55rem;
+  }
+  .ascii-reference dl div {
+    border: 1px solid var(--ink);
+    padding: 0.25rem;
+    text-align: center;
+  }
+  .ascii-reference dt {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+  }
+  .ascii-reference dd {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    font-weight: 900;
+    line-height: 1;
+    margin: 0.15rem 0 0;
+  }
+  .terminal-direction {
+    border-top: 1px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1.45;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+  }
+  .hex-keyword-form {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: 1fr auto;
+    margin-top: 1rem;
+  }
+  .hex-keyword-form label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    grid-column: 1 / -1;
+    text-transform: uppercase;
+  }
+  .hex-keyword-form input {
+    background: transparent;
+    border: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    min-width: 0;
+    padding: 0.55rem;
+    text-transform: uppercase;
+  }
+  .hex-keyword-form button {
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    color: var(--off-white);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.55rem 0.7rem;
+    text-transform: uppercase;
+  }
+  .hex-feedback {
+    color: #b42318;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    margin-top: 0.75rem;
+    min-height: 1.2rem;
+  }
+  .hex-keyword-form.solved input {
+    border-color: #2d7a3e;
+  }
+  .hex-keyword-form.solved + .hex-feedback {
+    color: #2d7a3e;
+  }
+  @media (max-width: 430px) {
+    .ascii-reference dl {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .hex-keyword-form {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

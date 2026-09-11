@@ -1,27 +1,49 @@
 ---
 /* MissionStatusModal.astro */
+import WireDispatchPuzzle from "./WireDispatchPuzzle.astro";
+import HexTeletypePuzzle from "./HexTeletypePuzzle.astro";
+import EditorialRedactionPuzzle from "./EditorialRedactionPuzzle.astro";
 ---
+
 <div id="mission-status-modal">
   <div class="modal-card" id="mission-status-modal-card">
     <!-- Screen 1: Mission Status Overview -->
     <div id="screen-status-overview" class="modal-screen">
       <h2 class="modal-header">MISSION CONTROL: STATUS</h2>
-      
+
       <div class="modal-text">
-        <p>Your current objective is to collect three hidden keys to unlock the Classified Archive.</p>
-        <p><strong>CURRENT STATUS:</strong> <span id="modal-key-count">0</span>/3 KEYS COLLECTED</p>
+        <p>
+          Your current objective is to collect three hidden keys to unlock the
+          Classified Archive.
+        </p>
+        <p>
+          <strong>CURRENT STATUS:</strong>
+          <span id="modal-key-count">0</span>/3 KEYS COLLECTED
+        </p>
 
         <h3>Collected Keys:</h3>
         <ul class="clue-list">
-          <li id="key-slot-1">Key 1: <span class="key-value">[PENDING]</span></li>
-          <li id="key-slot-2">Key 2: <span class="key-value">[PENDING]</span></li>
-          <li id="key-slot-3">Key 3: <span class="key-value">[PENDING]</span></li>
+          <li id="key-slot-1">
+            Key 1: <span class="key-value">[PENDING]</span>
+          </li>
+          <li id="key-slot-2">
+            Key 2: <span class="key-value">[PENDING]</span>
+          </li>
+          <li id="key-slot-3">
+            Key 3: <span class="key-value">[PENDING]</span>
+          </li>
         </ul>
       </div>
 
       <div class="modal-actions">
-        <button id="enter-key-btn" class="btn btn-primary">
-          ENTER KEY
+        <button id="open-wire-puzzle-btn" class="btn btn-secondary">
+          CASE FILE 01
+        </button>
+        <button id="open-hex-puzzle-btn" class="btn btn-secondary">
+          CASE FILE 02
+        </button>
+        <button id="open-redaction-puzzle-btn" class="btn btn-secondary">
+          CASE FILE 03
         </button>
         <button id="close-status-modal-btn" class="btn btn-secondary">
           CLOSE
@@ -29,21 +51,28 @@
       </div>
     </div>
 
-    <!-- Screen 2: Key Entry (simplified for now) -->
-    <div id="screen-key-entry" class="modal-screen hidden">
-      <h2 class="modal-header">ENTER KEY PHRASE</h2>
-      
-      <div class="modal-text">
-        <p>Type the secret keyphrase you discovered into the field below. Case-sensitive input required.</p>
-        <input type="text" id="key-input" class="key-input" placeholder="Type key here..." />
-        <p id="key-feedback" class="key-feedback"></p>
-      </div>
-
+    <div id="screen-wire-puzzle" class="modal-screen hidden">
+      <WireDispatchPuzzle />
       <div class="modal-actions">
-        <button id="submit-key-btn" class="btn btn-primary">
-          SUBMIT KEY
+        <button id="back-from-wire-puzzle-btn" class="btn btn-secondary">
+          BACK TO STATUS
         </button>
-        <button id="back-to-status-btn" class="btn btn-secondary">
+      </div>
+    </div>
+
+    <div id="screen-hex-puzzle" class="modal-screen hidden">
+      <HexTeletypePuzzle />
+      <div class="modal-actions">
+        <button id="back-from-hex-puzzle-btn" class="btn btn-secondary">
+          BACK TO STATUS
+        </button>
+      </div>
+    </div>
+
+    <div id="screen-redaction-puzzle" class="modal-screen hidden">
+      <EditorialRedactionPuzzle />
+      <div class="modal-actions">
+        <button id="back-from-redaction-puzzle-btn" class="btn btn-secondary">
           BACK TO STATUS
         </button>
       </div>
@@ -53,54 +82,72 @@
 
 <script>
   function initMissionStatusModal() {
-    const modal = document.getElementById('mission-status-modal');
-    const statusScreen = document.getElementById('screen-status-overview');
-    const keyEntryScreen = document.getElementById('screen-key-entry');
-    
-    const triggerBtn = document.getElementById('trigger-mission-modal');
-    const enterKeyBtn = document.getElementById('enter-key-btn');
-    const closeBtn = document.getElementById('close-status-modal-btn');
-    const submitKeyBtn = document.getElementById('submit-key-btn');
-    const backToStatusBtn = document.getElementById('back-to-status-btn');
-    const keyInput = document.getElementById('key-input') as HTMLInputElement;
-    const keyFeedback = document.getElementById('key-feedback') as HTMLParagraphElement;
+    const modal = document.getElementById("mission-status-modal");
+    const statusScreen = document.getElementById("screen-status-overview");
+    const wirePuzzleScreen = document.getElementById("screen-wire-puzzle");
+    const hexPuzzleScreen = document.getElementById("screen-hex-puzzle");
+    const redactionPuzzleScreen = document.getElementById(
+      "screen-redaction-puzzle",
+    );
+
+    const triggerBtn = document.getElementById("trigger-mission-modal");
+    const openWirePuzzleBtn = document.getElementById("open-wire-puzzle-btn");
+    const openHexPuzzleBtn = document.getElementById("open-hex-puzzle-btn");
+    const openRedactionPuzzleBtn = document.getElementById(
+      "open-redaction-puzzle-btn",
+    );
+    const backFromWirePuzzleBtn = document.getElementById(
+      "back-from-wire-puzzle-btn",
+    );
+    const backFromHexPuzzleBtn = document.getElementById(
+      "back-from-hex-puzzle-btn",
+    );
+    const backFromRedactionPuzzleBtn = document.getElementById(
+      "back-from-redaction-puzzle-btn",
+    );
+    const closeBtn = document.getElementById("close-status-modal-btn");
 
     if (!modal) return;
 
     const showModal = (screenToShow: HTMLElement) => {
-      statusScreen?.classList.add('hidden');
-      keyEntryScreen?.classList.add('hidden');
-      screenToShow.classList.remove('hidden');
-      modal.classList.add('visible');
+      statusScreen?.classList.add("hidden");
+      wirePuzzleScreen?.classList.add("hidden");
+      hexPuzzleScreen?.classList.add("hidden");
+      redactionPuzzleScreen?.classList.add("hidden");
+      screenToShow.classList.remove("hidden");
+      modal.classList.add("visible");
     };
 
     const closeModal = () => {
-      modal.classList.remove('visible');
-      keyInput.value = ''; // Clear input on close
-      keyFeedback.textContent = ''; // Clear feedback
+      modal.classList.remove("visible");
     };
 
     // Open this modal to the status screen
-    triggerBtn?.addEventListener('click', () => showModal(statusScreen!));
-    enterKeyBtn?.addEventListener('click', () => showModal(keyEntryScreen!));
-    closeBtn?.addEventListener('click', closeModal);
-    backToStatusBtn?.addEventListener('click', () => showModal(statusScreen!));
-
-    // TODO: Implement actual key submission logic later
-    submitKeyBtn?.addEventListener('click', () => {
-      const enteredKey = keyInput.value.trim();
-      if (enteredKey) {
-        keyFeedback.textContent = `Attempting to submit: "${enteredKey}"... (Logic not yet implemented)`;
-        // In a real scenario, you'd send this to a state management or server.
-      } else {
-        keyFeedback.textContent = 'Please enter a key.';
-      }
-    });
+    triggerBtn?.addEventListener("click", () => showModal(statusScreen!));
+    openWirePuzzleBtn?.addEventListener("click", () =>
+      showModal(wirePuzzleScreen!),
+    );
+    openHexPuzzleBtn?.addEventListener("click", () =>
+      showModal(hexPuzzleScreen!),
+    );
+    openRedactionPuzzleBtn?.addEventListener("click", () =>
+      showModal(redactionPuzzleScreen!),
+    );
+    backFromWirePuzzleBtn?.addEventListener("click", () =>
+      showModal(statusScreen!),
+    );
+    backFromHexPuzzleBtn?.addEventListener("click", () =>
+      showModal(statusScreen!),
+    );
+    backFromRedactionPuzzleBtn?.addEventListener("click", () =>
+      showModal(statusScreen!),
+    );
+    closeBtn?.addEventListener("click", closeModal);
 
     // This ensures the key count displayed in the modal updates
-    window.addEventListener('update-key-count', (event) => {
+    window.addEventListener("update-key-count", (event) => {
       const customEvent = event as CustomEvent;
-      const keyCountSpan = document.getElementById('modal-key-count');
+      const keyCountSpan = document.getElementById("modal-key-count");
       if (keyCountSpan) {
         keyCountSpan.textContent = customEvent.detail.count;
       }
@@ -109,7 +156,7 @@
   }
 
   // Setup on initial load and after Astro view transitions
-  document.addEventListener('astro:page-load', initMissionStatusModal);
+  document.addEventListener("astro:page-load", initMissionStatusModal);
 </script>
 <style>
   #mission-status-modal {
@@ -140,7 +187,7 @@
     font-family: var(--font-mono);
     max-height: 85vh;
     overflow-y: auto;
-    box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.2);
   }
 
   .modal-header {
@@ -160,7 +207,7 @@
     list-style: none;
     margin: 1rem 0;
     padding: 1rem;
-    background: rgba(0,0,0,0.05);
+    background: rgba(0, 0, 0, 0.05);
     border: 1px dashed #222;
   }
 
@@ -205,12 +252,16 @@
     color: white;
     border: none;
   }
-  .btn-primary:hover { background-color: #b91c1c; }
+  .btn-primary:hover {
+    background-color: #b91c1c;
+  }
 
   .btn-secondary {
     background-color: transparent;
     color: black;
     border: 1px solid black;
   }
-  .btn-secondary:hover { background-color: #ddd; }
+  .btn-secondary:hover {
+    background-color: #ddd;
+  }
 </style>

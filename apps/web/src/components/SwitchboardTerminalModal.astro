@@ -1,0 +1,89 @@
+---
+import SwitchboardTerminal from "./SwitchboardTerminal.astro";
+---
+
+<div id="switchboard-terminal-modal" aria-hidden="true">
+  <div
+    class="switchboard-modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Chronicle switchboard terminal"
+  >
+    <button
+      id="close-terminal-modal"
+      class="terminal-close"
+      type="button"
+      aria-label="Close switchboard terminal">X</button
+    >
+    <SwitchboardTerminal />
+  </div>
+</div>
+
+<script>
+  function initSwitchboardTerminalModal() {
+    const modal = document.getElementById("switchboard-terminal-modal");
+    const trigger = document.getElementById("trigger-terminal-modal");
+    const closeButton = document.getElementById("close-terminal-modal");
+    if (
+      !modal ||
+      !trigger ||
+      !closeButton ||
+      modal.dataset.initialized === "true"
+    )
+      return;
+
+    const close = () => {
+      modal.classList.remove("visible");
+      modal.setAttribute("aria-hidden", "true");
+    };
+
+    trigger.addEventListener("click", () => {
+      modal.classList.add("visible");
+      modal.setAttribute("aria-hidden", "false");
+      document.getElementById("terminal-key-input")?.focus();
+    });
+    closeButton.addEventListener("click", close);
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) close();
+    });
+    modal.dataset.initialized = "true";
+  }
+
+  document.addEventListener("astro:page-load", initSwitchboardTerminalModal);
+</script>
+
+<style>
+  #switchboard-terminal-modal {
+    align-items: center;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    transition: opacity 0.25s ease;
+    z-index: 1002;
+  }
+  #switchboard-terminal-modal.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .switchboard-modal-card {
+    max-width: 42rem;
+    position: relative;
+    width: min(92vw, 42rem);
+  }
+  .terminal-close {
+    background: #53604e;
+    border: 0;
+    color: #ecf1df;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.4rem 0.55rem;
+    position: absolute;
+    right: 0;
+    top: -2.1rem;
+  }
+</style>

@@ -1,7 +1,6 @@
 {
     "name": "Astro App",
     "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm",
-    "workspaceFolder": "/workspace",
     "customizations": {
         "vscode": {
             "settings": {},

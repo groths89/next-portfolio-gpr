@@ -1,13 +1,14 @@
 ---
-import { ClientRouter } from 'astro:transitions';
+import { ClientRouter } from "astro:transitions";
 import { icon } from "@fortawesome/fontawesome-svg-core";
-import { faInfo } from '@fortawesome/free-solid-svg-icons';
+import { faInfo } from "@fortawesome/free-solid-svg-icons";
 
-import '../styles/global.css';
-import GameIntro from '../components/GameIntro.astro';
-import MissionStatusModal from '../components/MissionStatusModal.astro';
-import FloatingPillNavigation from '../components/FloatingPillNavigation.astro';
-import PageFlipSound from '../components/PageFlipSound.astro';
+import "../styles/global.css";
+import GameIntro from "../components/GameIntro.astro";
+import MissionStatusModal from "../components/MissionStatusModal.astro";
+import SwitchboardTerminalModal from "../components/SwitchboardTerminalModal.astro";
+import FloatingPillNavigation from "../components/FloatingPillNavigation.astro";
+import PageFlipSound from "../components/PageFlipSound.astro";
 
 const { title } = Astro.props;
 const infoIcon = icon(faInfo);
@@ -19,7 +20,7 @@ const infoIcon = icon(faInfo);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>{ title } | 1989 Edition</title>
+    <title>{title} | 1989 Edition</title>
     <ClientRouter />
   </head>
   <body>
@@ -28,7 +29,12 @@ const infoIcon = icon(faInfo);
         <span class="mission-label"><Fragment set:html={infoIcon.html} /></span>
       </button>
       <button id="trigger-mission-modal" title="View Mission Briefing">
-        <span class="mission-label">MISSION STATUS: <span id="key-count">0</span>/3</span>
+        <span class="mission-label"
+          >MISSION STATUS: <span id="key-count">0</span>/3</span
+        >
+      </button>
+      <button id="trigger-terminal-modal" title="Open Switchboard Terminal">
+        <span class="mission-label">SWITCHBOARD</span>
       </button>
     </div>
     <FloatingPillNavigation />
@@ -37,35 +43,64 @@ const infoIcon = icon(faInfo);
     </main>
     <svg style="display: none;">
       <filter id="grain">
-        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
-        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0" />
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.65"
+          numOctaves="3"
+          stitchTiles="stitch"></feTurbulence>
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0"></feColorMatrix>
       </filter>
     </svg>
     <GameIntro />
     <MissionStatusModal />
-  </body>
-  <PageFlipSound />
+    <SwitchboardTerminalModal />
+  </body><PageFlipSound />
 </html>
 <style is:global>
-  .svg-inline--fa { height: 1em; vertical-align: -0.125em; }
+  .svg-inline--fa {
+    height: 1em;
+    vertical-align: -0.125em;
+  }
+  #trigger-terminal-modal {
+    background-color: #53604e;
+    color: #ecf1df;
+    border: 2px solid #53604e;
+    border-right: none;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    opacity: 0.92;
+    padding: 0.8rem 0.5rem;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+  }
+  #trigger-terminal-modal:hover {
+    background-color: #101d13;
+  }
 </style>
 <script>
   // Escape Room Progress State
   function updateMissionProgress(keyIndex: number) {
-    let keysFound = JSON.parse(localStorage.getItem('discovered_keys') || '[]');
-    if (!keysFound.includes(keyIndex)){
+    let keysFound = JSON.parse(localStorage.getItem("discovered_keys") || "[]");
+    if (!keysFound.includes(keyIndex)) {
       keysFound.push(keyIndex);
-      localStorage.setItem('discovered_keys', JSON.stringify(keysFound));
+      localStorage.setItem("discovered_keys", JSON.stringify(keysFound));
     }
 
-    const countEl = document.getElementById('key-count');
+    const countEl = document.getElementById("key-count");
     if (countEl) countEl.textContent = keysFound.length.toString();
   }
 
   // Initialize Key Counter on Load
-  document.addEventListener('DOMContentLoaded', () => {
-    const keysFound = JSON.parse(localStorage.getItem('discovered_keys') || '[]');
-    const countEl = document.getElementById('key-count');
+  document.addEventListener("DOMContentLoaded", () => {
+    const keysFound = JSON.parse(
+      localStorage.getItem("discovered_keys") || "[]",
+    );
+    const countEl = document.getElementById("key-count");
     if (countEl) countEl.textContent = keysFound.length.toString();
   });
 </script>

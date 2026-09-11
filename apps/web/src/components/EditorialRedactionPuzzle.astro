@@ -1,0 +1,182 @@
+---
+
+---
+
+<section class="redaction-puzzle" aria-labelledby="redaction-title">
+  <article id="redacted-editorial" class="redacted-editorial">
+    <p class="editorial-label">EDITORIAL MEMO / DECEMBER 1989</p>
+    <h2 id="redaction-title">THE COST OF SILENCE</h2>
+    <p>
+      Our newsroom has received reports of a software campaign delivered through
+      the mail. The public deserves a clear account of the parties responsible.
+    </p>
+    <p>The following instruction was removed from the recovered memorandum:</p>
+    <p class="redaction-line">
+      <span class="redaction-bar"
+        >SHIFT EACH LETTER BACK BY 3 STEPS IN THE ALPHABET.</span
+      >
+    </p>
+    <p>
+      The recovered memorandum points to concealed characters in the technical
+      archive.
+    </p>
+  </article>
+
+  <div class="lamp-controls">
+    <button id="switch-on-lamp" type="button">Switch on desk lamp</button>
+  </div>
+  <p id="redaction-status" class="redaction-status" aria-live="polite">
+    The redaction is opaque under ordinary light.
+  </p>
+
+  <p class="terminal-direction">
+    Record the decoded key, then enter it at the switchboard terminal.
+  </p>
+</section>
+
+<script>
+  function initEditorialRedactionPuzzle() {
+    const lampButton = document.getElementById("switch-on-lamp");
+    const editorial = document.getElementById("redacted-editorial");
+    const status = document.getElementById("redaction-status");
+    if (!lampButton || !editorial || !status) return;
+
+    lampButton.addEventListener("click", () => {
+      editorial.classList.add("under-lamp");
+      lampButton.setAttribute("disabled", "true");
+      window.dispatchEvent(new Event("reveal-tech-cipher"));
+      status.textContent =
+        "Yellow light passes through the marker. The concealed instruction is visible.";
+    });
+  }
+
+  document.addEventListener("astro:page-load", initEditorialRedactionPuzzle);
+</script>
+
+<style>
+  .redaction-puzzle {
+    border: 3px solid var(--ink);
+    padding: 1rem;
+  }
+  .redacted-editorial {
+    background: #f3f0e6;
+    border: 1px solid var(--ink);
+    font-family: serif;
+    line-height: 1.5;
+    margin-top: 1rem;
+    padding: 1rem;
+    transition: background 0.35s ease;
+  }
+  .editorial-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+  }
+  .redacted-editorial h2 {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    line-height: 1;
+    margin: 0.55rem 0 0.8rem;
+    text-transform: uppercase;
+  }
+  .redacted-editorial p + p {
+    margin-top: 0.7rem;
+  }
+  .redaction-line {
+    min-height: 1.8rem;
+  }
+  .redaction-bar {
+    background: var(--ink);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    padding: 0.22rem 0.35rem;
+    transition:
+      background 0.35s ease,
+      color 0.35s ease;
+  }
+  .under-lamp {
+    background: #fff1a8;
+    box-shadow: inset 0 0 32px rgba(230, 174, 28, 0.45);
+  }
+  .under-lamp .redaction-bar {
+    background: rgba(42, 32, 15, 0.52);
+    color: #241e10;
+  }
+  .ciphertext {
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+    letter-spacing: 0.12em;
+  }
+  .ciphertext-redaction {
+    display: inline-block;
+  }
+  .lamp-controls {
+    margin-top: 1rem;
+  }
+  .lamp-controls button,
+  .redaction-form button {
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    color: var(--off-white);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.55rem 0.7rem;
+    text-transform: uppercase;
+  }
+  .lamp-controls button:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+  .redaction-status,
+  .redaction-feedback {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    margin-top: 0.75rem;
+    min-height: 1.2rem;
+  }
+  .terminal-direction {
+    border-top: 1px solid var(--ink);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+  }
+  .redaction-form {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: 1fr auto;
+    margin-top: 1rem;
+  }
+  .redaction-form label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    grid-column: 1 / -1;
+    text-transform: uppercase;
+  }
+  .redaction-form input {
+    background: transparent;
+    border: 2px solid var(--ink);
+    font-family: var(--font-mono);
+    min-width: 0;
+    padding: 0.55rem;
+    text-transform: uppercase;
+  }
+  .redaction-feedback {
+    color: #b42318;
+    font-weight: 700;
+  }
+  .redaction-form.solved input {
+    border-color: #2d7a3e;
+  }
+  .redaction-form.solved + .redaction-feedback {
+    color: #2d7a3e;
+  }
+  @media (max-width: 430px) {
+    .redaction-form {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
